@@ -184,11 +184,11 @@ server <- function(input, output, session) {
   
   
   
-  # Apply server logic to each tab
-  server_logic("total_emissions", "Total Emissions")
-  server_logic("subsector_emissions", "Subsector Emissions")
-  server_logic("gas_emissions", "Gas Emissions")
+  # Apply server logic to each tab using lapply
+  lapply(list(c("total_emissions", "Total Emissions"), 
+              c("subsector_emissions", "Subsector Emissions"), 
+              c("gas_emissions", "Gas Emissions")), 
+         function(x) server_logic(x[1], x[2]))
 }
-
 # Load the app
 shinyApp(ui, server)
