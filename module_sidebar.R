@@ -17,6 +17,7 @@ generate_main_panel <- function(id_prefix) {
     width = 9,
     tabsetPanel(
       tabPanel("Line Chart", lineChartUI(paste0("lineChart_", id_prefix))),  # Line chart tab
+      tabPanel("Area Chart", areaChartUI(paste0("areaChart_", id_prefix))),  # Area chart tab
       tabPanel("Data Table", 
                dataTableOutput(paste0("pay_table_", id_prefix)),  # Data table output
                downloadButton(paste0("downloadData_", id_prefix), "Download Data")  # Download button

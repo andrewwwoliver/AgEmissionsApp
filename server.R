@@ -2,6 +2,26 @@
 source("module_data_functions.R")
 source("module_chart_functions.R")
 
+# Function to setup the server logic for each tab
+setup_tab <- function(tab_prefix, chart_type, input, output, session) {
+  # Create reactive chart data
+  chart_data <- reactive({
+    create_chart_data(chart_type, paste0("year_", tab_prefix), paste0("variables_", tab_prefix), input)
+  })
+  
+  # Render line chart
+  render_line_chart(paste0("lineChart_", tab_prefix), chart_data, chart_type, input, output)
+  
+  # Render area chart
+  render_area_chart(paste0("areaChart_", tab_prefix), chart_data, chart_type, input, output)
+  
+  # Render data table
+  render_data_table(paste0("pay_table_", tab_prefix), chart_data, output)
+  
+  # Handle data download
+  handle_data_download(paste0("downloadData_", tab_prefix), chart_type, chart_data, input, output)
+}
+
 # Set up server
 server <- function(input, output, session) {
   # Reactive for chart type based on selected tab
@@ -22,23 +42,15 @@ server <- function(input, output, session) {
     handle_variable_select_and_buttons(prefix, variables, input, output, session)
   })
   
-  # Create reactive chart data for each tab
-  chart_data_total <- create_chart_data("Total Emissions", "year_total", "variables_total", input)
-  chart_data_subsector <- create_chart_data("Subsector Emissions", "year_subsector", "variables_subsector", input)
-  chart_data_gas <- create_chart_data("Gas Emissions", "year_gas", "variables_gas", input)
+  # Set up tabs
+  tabs <- list(
+    total = "Total Emissions",
+    subsector = "Subsector Emissions",
+    gas = "Gas Emissions"
+  )
   
-  # Render line charts for each tab
-  render_line_chart("lineChart_total", chart_data_total, "Total Emissions", input, output)
-  render_line_chart("lineChart_subsector", chart_data_subsector, "Subsector Emissions", input, output)
-  render_line_chart("lineChart_gas", chart_data_gas, "Gas Emissions", input, output)
-  
-  # Render data tables for each tab
-  render_data_table("pay_table_total", chart_data_total, output)
-  render_data_table("pay_table_subsector", chart_data_subsector, output)
-  render_data_table("pay_table_gas", chart_data_gas, output)
-  
-  # Handle data download for each tab
-  handle_data_download("downloadData_total", "Total Emissions", chart_data_total, input, output)
-  handle_data_download("downloadData_subsector", "Subsector Emissions", chart_data_subsector, input, output)
-  handle_data_download("downloadData_gas", "Gas Emissions", chart_data_gas, input, output)
+  # Set up each tab using the setup_tab function
+  lapply(names(tabs), function(prefix) {
+    setup_tab(prefix, tabs[[prefix]], input, output, session)
+  })
 }
