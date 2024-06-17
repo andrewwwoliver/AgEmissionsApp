@@ -9,6 +9,7 @@ library(htmltools)
 library(DT)
 library(shinyjs)
 library(RColorBrewer)
+library(shinyjs)
 
 
 # Highchart options
