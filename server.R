@@ -1,6 +1,7 @@
 # Source the necessary modules for server logic
 source("module_data_functions.R")
 source("module_chart_functions.R")
+source("module_bar_chart.R")
 
 # Function to setup the server logic for each tab
 setup_tab <- function(tab_prefix, chart_type, input, output, session) {
@@ -8,6 +9,17 @@ setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   chart_data <- reactive({
     create_chart_data(chart_type, paste0("year_", tab_prefix), paste0("variables_", tab_prefix), input)
   })
+  
+  # Industry colors (assuming these are consistent across datasets)
+  industry_colors <- list(
+    "Transport" = "#1f77b4",
+    "Electricity Generation" = "#ff7f0e",
+    "Industry" = "#2ca02c",
+    "Buildings" = "#d62728",
+    "Agriculture" = "#9467bd",
+    "Waste Management" = "#8c564b",
+    "LULUCF" = "#e377c2"
+  )
   
   # Render line chart
   render_line_chart(paste0("lineChart_", tab_prefix), chart_data, chart_type, input, output)
@@ -20,6 +32,9 @@ setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   
   # Handle data download
   handle_data_download(paste0("downloadData_", tab_prefix), chart_type, chart_data, input, output)
+  
+  # Render bar chart
+  barChartServer(paste0("barChart_", tab_prefix), chart_data(), industry_colors)
 }
 
 # Set up server

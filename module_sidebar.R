@@ -10,7 +10,6 @@ generate_sidebar_panel <- function(id_prefix) {
         sliderInput(paste0("year_", id_prefix), "Select year range", value = c(1990, 2023), min = 1990, max = 2023, step = 1, sep = "", ticks = TRUE))
   )
 }
-
 # Function to generate the main panel
 generate_main_panel <- function(id_prefix) {
   mainPanel(
@@ -21,7 +20,8 @@ generate_main_panel <- function(id_prefix) {
       tabPanel("Data Table", 
                dataTableOutput(paste0("pay_table_", id_prefix)),  # Data table output
                downloadButton(paste0("downloadData_", id_prefix), "Download Data")  # Download button
-      )
+      ),
+      tabPanel("Bar Chart", barChartUI(paste0("barChart_", id_prefix)))  # Bar chart tab
     )
   )
 }

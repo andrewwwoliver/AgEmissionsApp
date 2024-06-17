@@ -5,6 +5,7 @@ source("module_line_chart.R")
 source("module_data_table.R")
 source("options.R")
 source("module_area_chart.R")
+source("module_bar_chart.R")
 
 # Generate the UI
 ui <- fluidPage(
