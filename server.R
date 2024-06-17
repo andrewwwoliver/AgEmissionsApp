@@ -34,8 +34,9 @@ setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   handle_data_download(paste0("downloadData_", tab_prefix), chart_type, chart_data, input, output)
   
   # Render bar chart
-  barChartServer(paste0("barChart_", tab_prefix), chart_data(), industry_colors)
+  barChartServer(paste0("barChart_", tab_prefix), chart_data, chart_type, input, output)
 }
+
 
 # Set up server
 server <- function(input, output, session) {

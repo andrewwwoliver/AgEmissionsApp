@@ -16,3 +16,12 @@ create_chart_data <- function(chart_type, year_input, variables_input, input) {
   data <- filter(data, !!sym(names(data)[1]) %in% input[[variables_input]])
   data
 }
+
+# Function to assign colors to variables
+assign_colors <- function(data) {
+  first_col_name <- names(data)[1]
+  variables <- unique(data[[first_col_name]])
+  colors <- brewer.pal(length(variables), "Set3")
+  names(colors) <- variables
+  return(colors)
+}

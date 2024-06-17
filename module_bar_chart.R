@@ -14,16 +14,14 @@ barChartUI <- function(id) {
   )
 }
 
-
-
 # Server function for the bar chart module
-barChartServer <- function(id, data, industry_colors) {
+barChartServer <- function(id, chart_data, chart_type, input, output) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
     # Filter data based on selected year
     getData <- function(year, nbr) {
-      data %>%
+      chart_data() %>%
         filter(Year == year) %>%
         arrange(desc(Value)) %>%
         slice(1:nbr) %>%
@@ -37,12 +35,13 @@ barChartServer <- function(id, data, industry_colors) {
     }
     
     # Generate data list for highcharter
-    getDataList <- function(data) {
+    getDataList <- function(data, colors) {
+      first_col_name <- names(data)[1]
       lapply(1:nrow(data), function(i) {
         list(
-          name = data$Industry[i],
+          name = data[[first_col_name]][i],
           y = data$Value[i],
-          color = industry_colors[[data$Industry[i]]]
+          color = colors[[data[[first_col_name]][i]]]
         )
       })
     }
@@ -58,8 +57,12 @@ barChartServer <- function(id, data, industry_colors) {
       getSubtitle(current_year(), current_data())
     })
     
+    current_colors <- reactive({
+      assign_colors(current_data())
+    })
+    
     current_data_list <- reactive({
-      getDataList(current_data())
+      getDataList(current_data(), current_colors())
     })
     
     updateYear <- function() {
@@ -86,11 +89,12 @@ barChartServer <- function(id, data, industry_colors) {
     })
     
     output$chart <- renderHighchart({
+      first_col_name <- names(current_data())[1]
       highchart() %>%
         hc_chart(type = "bar", animation = list(duration = 1000)) %>%
         hc_title(text = "GHG Emissions by Industry", align = "left") %>%
         hc_subtitle(useHTML = TRUE, text = current_subtitle(), floating = TRUE, align = "right", verticalAlign = "bottom", y = 30, x = -100) %>%
-        hc_xAxis(type = "category", categories = current_data()$Industry) %>%
+        hc_xAxis(type = "category", categories = current_data()[[first_col_name]]) %>%
         hc_yAxis(opposite = TRUE, tickPixelInterval = 150, title = list(text = NULL)) %>%
         hc_plotOptions(series = list(
           animation = FALSE,

@@ -8,7 +8,7 @@ library(png)
 library(htmltools)
 library(DT)
 library(shinyjs)
-
+library(RColorBrewer)
 
 
 # Highchart options
