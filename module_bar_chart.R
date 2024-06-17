@@ -14,6 +14,7 @@ barChartUI <- function(id) {
   )
 }
 
+
 # Server function for the bar chart module
 barChartServer <- function(id, chart_data, chart_type, input, output) {
   moduleServer(id, function(input, output, session) {
@@ -58,7 +59,7 @@ barChartServer <- function(id, chart_data, chart_type, input, output) {
     })
     
     current_colors <- reactive({
-      assign_colors(current_data())
+      assign_colors(chart_data(), preset_colors)
     })
     
     current_data_list <- reactive({

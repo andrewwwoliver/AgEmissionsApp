@@ -10,18 +10,22 @@ get_variables <- function(chart_type) {
 # Function to create reactive chart data based on user inputs
 create_chart_data <- function(chart_type, year_input, variables_input, input) {
   data <- get_variables(chart_type)  # Get the relevant data
+  first_col_name <- names(data)[1]  # Get the first column name dynamically
   # Filter data based on the selected year range
-  data <- filter(data, Year >= min(input[[year_input]]) & Year <= max(input[[year_input]]))
-  # Filter data based on the selected variables
-  data <- filter(data, !!sym(names(data)[1]) %in% input[[variables_input]])
+  data <- data %>%
+    filter(Year >= min(input[[year_input]]) & Year <= max(input[[year_input]])) %>%
+    filter(!!sym(first_col_name) %in% input[[variables_input]])
   data
 }
 
+# Preset list of colors
+preset_colors <- c("#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", 
+                   "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf")
+
 # Function to assign colors to variables
-assign_colors <- function(data) {
+assign_colors <- function(data, colors) {
   first_col_name <- names(data)[1]
   variables <- unique(data[[first_col_name]])
-  colors <- brewer.pal(length(variables), "Set3")
-  names(colors) <- variables
-  return(colors)
+  color_mapping <- setNames(colors[1:length(variables)], variables)
+  return(color_mapping)
 }
