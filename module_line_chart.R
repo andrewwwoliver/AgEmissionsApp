@@ -1,165 +1,53 @@
 ## module_line_chart.R
 
-# UI function for the bar chart module
-barChartUI <- function(id) {
+# UI function for the line chart module
+lineChartUI <- function(id) {
   ns <- NS(id)
   tagList(
-    tags$style(HTML("
-      .chart-container {
-        position: relative;
-      }
-      .chart-controls {
-        position: absolute;
-        top: 0;
-        right: 0;
-        display: flex;
-        align-items: center;
-      }
-      .chart-controls .form-group {
-        margin-bottom: 0;
-        margin-left: 10px;
-      }
-      .chart-controls .btn {
-        margin-left: 10px;
-      }
-      .year-label {
-        margin-right: 10px;
-        font-weight: bold;
-      }
-    ")),
-    div(class = "chart-container",
-        highchartOutput(ns("chart"), height = "500px"),  # Set a max height here
-        div(class = "chart-controls",
-            div(class = "year-label", "Year:"),
-            sliderInput(ns("year"), NULL, min = 2000, max = 2022, value = 2000, step = 1, animate = animationOptions(interval = 1000, loop = FALSE), width = '200px'),
-            actionButton(ns("playPause"), "", icon = icon("play"), class = "btn btn-primary")
-        )
-    )
+    highchartOutput(ns("line_chart")),
+    h2("Note:"),
+    p("To remove a series from the chart, either deselect from the sidebar menu or click on its legend."),
+    p("You can see data values for a specific year by hovering your mouse over the line.")
   )
 }
 
-# Server function for the bar chart module
-barChartServer <- function(id, chart_data, chart_type, input, output) {
+# Server function for the line chart module
+lineChartServer <- function(id, data, group_column, title, yAxisTitle) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
-    # Filter data based on selected year
-    getData <- function(year, nbr) {
-      data <- chart_data()
-      if (is.null(data) || nrow(data) == 0) return(data.frame())
-      data %>%
-        filter(Year == year) %>%
-        arrange(desc(Value)) %>%
-        slice(1:nbr) %>%
-        mutate(Value = as.numeric(Value))
-    }
-    
-    # Generate subtitle
-    getSubtitle <- function(year, data) {
-      if (nrow(data) == 0) return("")
-      total_value <- sum(data$Value, na.rm = TRUE)
-      paste0("<span style='font-size: 80px'>", year, "</span><br><span style='font-size: 22px'>Total: <b>", round(total_value, 2), "</b> units</span>")
-    }
-    
-    # Generate data list for highcharter
-    getDataList <- function(data, colors) {
-      if (nrow(data) == 0) return(list())
-      first_col_name <- names(data)[1]
-      lapply(1:nrow(data), function(i) {
-        list(
-          name = data[[first_col_name]][i],
-          y = data$Value[i],
-          color = colors[[data[[first_col_name]][i]]]
-        )
-      })
-    }
-    
-    current_year <- reactiveVal(2000)
-    nbr <- 20
-    
-    current_data <- reactive({
-      getData(current_year(), nbr)
+    reactive_colors <- reactive({
+      assign_colors(data(), preset_colors)
     })
     
-    current_subtitle <- reactive({
-      getSubtitle(current_year(), current_data())
-    })
-    
-    current_colors <- reactive({
-      assign_colors(chart_data(), preset_colors)
-    })
-    
-    current_data_list <- reactive({
-      getDataList(current_data(), current_colors())
-    })
-    
-    updateYear <- function() {
-      year <- current_year()
-      if (year < 2022) {
-        current_year(year + 1)
-      } else {
-        current_year(2000)
-        session$sendCustomMessage(type = 'resetPlayButton', message = NULL)
-      }
-    }
-    
-    observe({
-      if (input$playPause %% 2 == 1) {
-        isolate({
-          updateYear()
-        })
-        invalidateLater(1000, session)
-      }
-    })
-    
-    observe({
-      updateSliderInput(session, "year", value = current_year())
-    })
-    
-    output$chart <- renderHighchart({
-      data <- current_data()
-      if (nrow(data) == 0) return(NULL)
-      first_col_name <- names(data)[1]
-      highchart() %>%
-        hc_chart(type = "bar", animation = list(duration = 1000)) %>%
-        hc_title(text = "GHG Emissions by Industry", align = "left") %>%
-        hc_subtitle(useHTML = TRUE, text = current_subtitle(), floating = TRUE, align = "right", verticalAlign = "bottom", y = 30, x = -100) %>%
-        hc_xAxis(type = "category", categories = data[[first_col_name]]) %>%
-        hc_yAxis(opposite = TRUE, tickPixelInterval = 150, title = list(text = NULL)) %>%
-        hc_plotOptions(series = list(
-          animation = FALSE,
-          groupPadding = 0,
-          pointPadding = 0.1,
-          borderWidth = 0,
-          colorByPoint = FALSE,
-          dataSorting = list(enabled = TRUE, matchByName = TRUE),
-          dataLabels = list(enabled = TRUE, format = '{point.y:.2f}')
-        )) %>%
-        hc_series(list(
-          name = as.character(current_year()),
-          data = current_data_list()
-        )) %>%
-        hc_responsive(rules = list(
-          list(
-            condition = list(maxWidth = 550),
-            chartOptions = list(
-              xAxis = list(visible = FALSE),
-              subtitle = list(x = 0),
-              plotOptions = list(
-                series = list(
-                  dataLabels = list(
-                    list(enabled = TRUE, y = 8),
-                    list(enabled = TRUE, format = '{point.name}', y = -8, style = list(fontWeight = 'normal', opacity = 0.7))
-                  )
-                )
-              )
-            )
+    output$line_chart <- renderHighchart({
+      chart_data <- data()
+      colors <- reactive_colors()
+      
+      hc <- highchart() %>%
+        hc_chart(type = "line", style = list(fontFamily = "Roboto")) %>%
+        hc_yAxis(title = list(text = yAxisTitle(), style = list(color = "#000000", fontSize = "20px", fontFamily = "Roboto"))) %>%
+        hc_xAxis(
+          labels = list(style = list(color =  "#000000", fontSize = "20px", fontFamily = "Roboto")),
+          title = list(text = "", style = list(color = "#000000", fontSize = "20px", fontFamily = "Roboto")),
+          type = "category"
+        ) %>%
+        hc_legend(align = "left", alignColumns = FALSE, layout = "horizontal") %>%
+        hc_tooltip(pointFormat = "{point.y:,.1f}") %>%
+        hc_plotOptions(line = list(colorByPoint = FALSE)) %>%
+        hc_add_theme(thm)
+      
+      unique_groups <- unique(chart_data[[group_column()]])
+      for (g in unique_groups) {
+        hc <- hc %>%
+          hc_add_series(
+            name = g,
+            data = chart_data[chart_data[[group_column()]] == g, ] %>% select(x = Year, y = Value),
+            color = colors[[g]]
           )
-        ))
-    })
-    
-    observeEvent(input$year, {
-      current_year(input$year)
+      }
+      
+      hc
     })
   })
 }
