@@ -1,3 +1,5 @@
+##module_sidebar.R
+
 # Function to generate the sidebar panel
 generate_sidebar_panel <- function(id_prefix) {
   div(

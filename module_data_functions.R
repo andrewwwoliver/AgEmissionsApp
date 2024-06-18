@@ -1,3 +1,5 @@
+##module_data_functions.R
+
 # Function to get data based on the chart type
 get_variables <- function(chart_type) {
   data <- switch(chart_type,
@@ -19,8 +21,10 @@ create_chart_data <- function(chart_type, year_input, variables_input, input) {
 }
 
 # Preset list of colors
-preset_colors <- c("#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", 
-                   "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf")
+preset_colors <- c("#002d54",  "#2b9c93" , "#6a2063",  "#e5682a" ,
+                   "#0b4c0b" ,  "#5d9f3c" , "#592c20",  "#ca72a2" )
+
+# Could use af_colour_values or sg_colour_values
 
 # Function to assign colors to variables
 assign_colors <- function(data, colors) {

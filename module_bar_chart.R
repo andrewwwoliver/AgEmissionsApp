@@ -1,15 +1,38 @@
+##module_bar_chart.R
 # UI function for the bar chart module
 barChartUI <- function(id) {
   ns <- NS(id)
   tagList(
-    highchartOutput(ns("chart"), height = "600px"),
-    fluidRow(
-      column(10,
-             sliderInput(ns("year"), "Year:", min = 2000, max = 2022, value = 2000, step = 1, animate = animationOptions(interval = 1000, loop = FALSE), width = '100%')
-      ),
-      column(2,
-             actionButton(ns("playPause"), "", icon = icon("play"), class = "btn", style = "margin-top: 24px;")
-      )
+    tags$style(HTML("
+      .chart-container {
+        position: relative;
+      }
+      .chart-controls {
+        position: absolute;
+        top: 10px;  /* Adjusted to move up */
+        right: 20px;
+        display: flex;
+        align-items: center;
+      }
+      .chart-controls .form-group {
+        margin-bottom: 0;
+        margin-left: 10px;
+      }
+      .chart-controls .btn {
+        margin-left: 10px;
+      }
+      .year-label {
+        margin-right: 10px;
+        font-weight: bold;
+      }
+    ")),
+    div(class = "chart-container",
+        highchartOutput(ns("chart"), height = "500px"),  # Set a max height here
+        div(class = "chart-controls",
+            div(class = "year-label", "Year:"),
+            sliderInput(ns("year"), NULL, min = 2000, max = 2022, value = 2000, step = 1, animate = animationOptions(interval = 1000, loop = FALSE), width = '200px'),
+            actionButton(ns("playPause"), "", icon = icon("play"), class = "btn btn-primary")
+        )
     )
   )
 }

@@ -1,130 +1,14 @@
-/* ------------------------------------------------------------------- */
-/* slider */
-/* ------------------------------------------------------------------- */
-@charset "UTF-8";
-/* 'shiny' skin for Ion.RangeSlider, largely based on the 'big' skin, but with smaller dimensions, grayscale grid text, and without gradients
-© RStudio, Inc, 2014
-© Denis Ineshin, 2014  https://github.com/IonDen
-© guybowden, 2014  https://github.com/guybowden
-*/
+/* styles.css */
 
-
-/* ------------------------------------------------------------------- */
 /* Page Layout */
-/* ------------------------------------------------------------------- */
-
-@page {
-  margin-bottom: 1.27cm;
-  margin-left: 1.27cm;
-  margin-right: 1.27cm;
-  margin-top: 1.27cm;
+.full-height {
+  height: 100vh;
 }
-
-/* ------------------------------------------------------------------- */
-/* Common Elements */
-/* ------------------------------------------------------------------- */
-
-body {
-  color: black !important;
-  font-size: 18px;
-  line-height: 1.5em;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  padding: 0 !important;
-}
-
-h1 {
-  font-size: 1.8em;
-}
-
-h2 {
-  font-size: 1.2em;
-}
-
-h3 {
-  font-size: 0.8em;
-}
-
-h4, h5, h6 {
-  font-size: 1em;
-  text-decoration: underline;
-}
-
-/* ------------------------------------------------------------------- */
-/* Figures, Images, and Tables */
-/* ------------------------------------------------------------------- */
-
-/* Limit the position and size of elements */
-figure, img, table {
-  max-width: 80%;
-  page-break-inside: avoid;
-}
-
-/* ------------------------------------------------------------------- */
-/* Sidebar and Main Content Layout */
-/* ------------------------------------------------------------------- */
-
 
 .sidebar {
-  position: absolute;
-  top: 150px; /* Adjust this value based on the height of your title and other top content */
-  bottom: 0;
-  width: 250px;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  margin-top: 10px !important;
 }
 
-.main {
-  margin-left: 270px; /* Slightly more than the sidebar width for some padding */
-  padding: 10px;
+.main-panel {
+  margin-top: 10px !important;
 }
-
-@media screen and (max-width: 768px) {
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-    border-right: none;
-    top: 0; /* Reset the top value for small screens */
-  }
-  .main {
-    margin-left: 0;
-    padding-top: 20px; /* Adjust for mobile view */
-  }
-}
-
-
-/* styles.css */
-.header-tabs .nav-tabs {
-  border-bottom: 2px solid #007bff;
-}
-
-.header-tabs .nav-tabs .nav-item.show .nav-link, 
-.header-tabs .nav-tabs .nav-link.active {
-  color: #fff;
-  background-color: #007bff;
-  border-color: #007bff #007bff #fff;
-  border-radius: 0;
-}
-
-.header-tabs .nav-tabs .nav-link {
-  border: 1px solid transparent;
-  border-top-left-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
-  color: #007bff;
-  padding: 10px;
-}
-
-.header-tabs .nav-tabs .nav-link:hover {
-  border-color: #e9ecef #e9ecef #ddd;
-  background-color: #e9ecef;
-  color: #0056b3;
-}
-
-.header-tabs .tab-content {
-  border: 1px solid #ddd;
-  border-top: none;
-  padding: 10px;
-}
-
-

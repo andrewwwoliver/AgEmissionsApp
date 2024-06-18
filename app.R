@@ -1,3 +1,4 @@
+## app.R
 # Source other elements
 source("module_sidebar.R")
 source("module_line_chart.R")

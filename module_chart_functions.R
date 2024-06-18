@@ -1,3 +1,4 @@
+## module_chart_functions.R
 # Function to render line charts
 render_line_chart <- function(chart_id, chart_data, chart_type, input, output) {
   # Create reactive for the first column name of the data

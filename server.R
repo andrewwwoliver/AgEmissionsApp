@@ -1,9 +1,9 @@
+##server.R
 # Source the necessary modules for server logic
 source("module_data_functions.R")
 source("module_chart_functions.R")
 source("module_bar_chart.R")
-
-
+source("module_data_table.R")
 
 # Function to setup the server logic for each tab
 setup_tab <- function(tab_prefix, chart_type, input, output, session) {
@@ -22,7 +22,7 @@ setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   render_data_table(paste0("pay_table_", tab_prefix), chart_data, output)
   
   # Handle data download
-  handle_data_download(paste0("downloadData_", tab_prefix), chart_type, chart_data, input, output)
+  handle_data_download(paste0("downloadData_", tab_prefix), chart_type, chart_data, input, output, paste0("year_", tab_prefix))
   
   # Render bar chart
   barChartServer(paste0("barChart_", tab_prefix), chart_data, chart_type, input, output)
@@ -70,8 +70,6 @@ server <- function(input, output, session) {
       updateCheckboxGroupInput(session, "variables_gas", selected = setdiff(variables(), "Total"))
       updateSliderInput(session, "year_gas", value = c(1990, 2023))
     }
-    
-   
   })
   
   # Trigger the reset for the initial selection of "Bar Chart" tab
