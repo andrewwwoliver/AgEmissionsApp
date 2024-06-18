@@ -1,14 +1,31 @@
 /* styles.css */
 
-/* Page Layout */
+/* General styles */
+.full-width {
+  width: 100% !important;
+}
 .full-height {
-  height: 100vh;
+  height: 100vh !important;
 }
-
+.navbar {
+  margin-bottom: 5px !important;
+}
 .sidebar {
-  margin-top: 10px !important;
+  width: 250px !important;
+  padding: 10px !important;
+  border-right: 1px solid #ddd !important;
+  float: left !important;  /* Float to the left */
+  height: calc(100vh - 65px) !important;  /* Adjust for header and reduced margin */
 }
-
 .main-panel {
-  margin-top: 10px !important;
+  margin-left: 270px !important;
+  padding: 10px !important;
+  overflow: auto !important;  /* Enable scrolling for main content */
+  height: calc(100vh - 65px) !important;  /* Adjust for header and reduced margin */
+}
+.header-logo {
+  position: absolute !important;
+  top: 0px !important;
+  right: 0px !important;
+  height: 60px !important;
 }

@@ -1,4 +1,3 @@
-##module_bar_chart.R
 # UI function for the bar chart module
 barChartUI <- function(id) {
   ns <- NS(id)
@@ -27,7 +26,7 @@ barChartUI <- function(id) {
       }
     ")),
     div(class = "chart-container",
-        highchartOutput(ns("chart"), height = "500px"),  # Set a max height here
+        highchartOutput(ns("chart"), height = "500px"),  # Adjusted height here
         div(class = "chart-controls",
             div(class = "year-label", "Year:"),
             sliderInput(ns("year"), NULL, min = 2000, max = 2022, value = 2000, step = 1, animate = animationOptions(interval = 1000, loop = FALSE), width = '200px'),
@@ -41,6 +40,14 @@ barChartUI <- function(id) {
 barChartServer <- function(id, chart_data, chart_type, input, output) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
+    
+    # Get the maximum value across all data for consistent x-axis
+    max_value <- reactive({
+      all_data <- chart_data()
+      if (is.null(all_data) || nrow(all_data) == 0) return(0)
+      max_val <- max(all_data$Value, na.rm = TRUE)
+      return(max_val)
+    })
     
     # Filter data based on selected year
     getData <- function(year, nbr) {
@@ -124,7 +131,7 @@ barChartServer <- function(id, chart_data, chart_type, input, output) {
         hc_title(text = "GHG Emissions by Industry", align = "left") %>%
         hc_subtitle(useHTML = TRUE, text = current_subtitle(), floating = TRUE, align = "right", verticalAlign = "bottom", y = 30, x = -100) %>%
         hc_xAxis(type = "category", categories = data[[first_col_name]]) %>%
-        hc_yAxis(opposite = TRUE, tickPixelInterval = 150, title = list(text = NULL)) %>%
+        hc_yAxis(opposite = TRUE, tickPixelInterval = 150, title = list(text = NULL), max = max_value() + 1) %>%
         hc_plotOptions(series = list(
           animation = FALSE,
           groupPadding = 0,
