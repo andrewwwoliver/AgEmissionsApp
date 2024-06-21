@@ -1,4 +1,4 @@
-## module_line_chart.R
+#module_line_chart.R
 
 # UI function for the line chart module
 lineChartUI <- function(id) {
@@ -33,7 +33,7 @@ lineChartServer <- function(id, data, group_column, title, yAxisTitle) {
           type = "category"
         ) %>%
         hc_legend(align = "left", alignColumns = FALSE, layout = "horizontal") %>%
-        hc_tooltip(pointFormat = "{point.y:,.1f}") %>%
+        hc_tooltip(pointFormat = "<b>{series.name}</b><br/>Value: {point.y:,.1f}") %>%
         hc_plotOptions(line = list(colorByPoint = FALSE)) %>%
         hc_add_theme(thm)
       

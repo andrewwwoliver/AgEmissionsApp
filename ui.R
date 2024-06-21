@@ -1,3 +1,5 @@
+#ui.R
+
 # Source UI modules
 source("module_sidebar.R")
 source("module_line_chart.R")
@@ -5,13 +7,14 @@ source("module_data_table.R")
 source("options.R")
 source("module_area_chart.R")
 source("module_bar_chart.R")
-
+source("module_summary.R")
 
 # Generate the UI
 ui <- fluidPage(
   theme = shinytheme("flatly"),  # Apply a shiny theme
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),  # Link to your custom CSS
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
   div(class = "container-fluid full-height",  # Ensure the full height of the container
       navbarPage(
         title = div(
@@ -24,4 +27,4 @@ ui <- fluidPage(
         tabPanel("Gas Emissions", value = "gas", generate_sidebar_layout("gas"))
       )
   )
-))
+)

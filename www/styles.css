@@ -29,3 +29,70 @@
   right: 0px !important;
   height: 60px !important;
 }
+
+  .box {
+    border: 1px solid #e3e3e3;
+    background-color: white;
+    margin: 0;
+    padding: 10px;
+  }
+  .value-box {
+    height: 160px !important;
+    text-align: left;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    margin: 0;
+    padding: 0;
+  }
+  .value-box .inner {
+    padding: 5px;
+  }
+  .value-box h3, .value-box h5 {
+    margin: 0;
+    color: #333;
+  }
+  .value-box h3 {
+    font-size: 36px;
+    font-weight: bold;
+  }
+  .value-box-units {
+    font-size: 18px;
+    margin-left: 5px;
+    display: inline-block;
+  }
+  .value-box-title {
+    font-size: 20px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  .value-box-yoy {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .sparkline {
+    width: 100%;
+    height: 30px;
+  }
+  .header-text {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .box-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 0px;
+  }
+  .box-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+  .content, .row, .col {
+    margin: 0;
+    padding: 0;
+  }
+  .body {
+    background-color: #f9f9f9;
+    font-family: 'Arial', sans-serif;
+  }

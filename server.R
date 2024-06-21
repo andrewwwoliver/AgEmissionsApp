@@ -1,15 +1,27 @@
-##server.R
+#server.R
+
 # Source the necessary modules for server logic
 source("module_data_functions.R")
 source("module_chart_functions.R")
 source("module_bar_chart.R")
 source("module_data_table.R")
+source("module_summary.R")
 
 # Function to setup the server logic for each tab
 setup_tab <- function(tab_prefix, chart_type, input, output, session) {
-  # Create reactive chart data
+  # Create reactive chart data based on sidebar inputs
   chart_data <- reactive({
     create_chart_data(chart_type, paste0("year_", tab_prefix), paste0("variables_", tab_prefix), input)
+  })
+  
+  # Get the first column name dynamically
+  first_col_name <- reactive({
+    names(chart_data())[1]
+  })
+  
+  # Get the entire dataset without filtering based on sidebar inputs for summary page
+  full_data <- reactive({
+    get_variables(chart_type)
   })
   
   # Render line chart
@@ -26,6 +38,36 @@ setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   
   # Render bar chart
   barChartServer(paste0("barChart_", tab_prefix), chart_data, chart_type, input, output)
+  
+  # Render summary page
+  current_year <- reactive({ input[[paste0("year_", tab_prefix)]][2] })
+  comparison_year <- reactive({ input[[paste0("year_", tab_prefix)]][1] })
+  
+  valueBoxServer(paste0("totalIndustry1_", tab_prefix), full_data, first_col_name, get_industry(1, full_data, current_year, first_col_name), current_year, comparison_year)
+  valueBoxServer(paste0("totalIndustry2_", tab_prefix), full_data, first_col_name, get_industry(2, full_data, current_year, first_col_name), current_year, comparison_year)
+  valueBoxServer(paste0("totalIndustry3_", tab_prefix), full_data, first_col_name, get_industry(3, full_data, current_year, first_col_name), current_year, comparison_year)
+  valueBoxServer(paste0("totalValue_", tab_prefix), full_data, first_col_name, reactive("Total"), current_year, comparison_year)
+  
+  summaryPieChartServer(paste0("industryPieChart_", tab_prefix), full_data, current_year, first_col_name)
+  summaryBarChartServer(paste0("industryBarChart_", tab_prefix), full_data, current_year, comparison_year, first_col_name)
+}
+
+# Function to get top industries
+get_industry <- function(index, data, current_year, first_col_name) {
+  reactive({
+    industries <- data() %>%
+      filter(Year == current_year() & !!sym(first_col_name()) != "Total") %>%
+      group_by(!!sym(first_col_name())) %>%
+      summarise(Value = sum(Value, na.rm = TRUE)) %>%
+      arrange(desc(Value)) %>%
+      slice_head(n = 3) %>%
+      pull(!!sym(first_col_name()))
+    if (length(industries) >= index) {
+      industries[index]
+    } else {
+      NA
+    }
+  })
 }
 
 # Set up server
@@ -60,25 +102,17 @@ server <- function(input, output, session) {
     setup_tab(prefix, tabs[[prefix]], input, output, session)
   })
   
-  # Reset sidebar inputs when "Bar Chart" tab is selected and hide sidebar
-  observeEvent(input$reset_sidebar, {
-    if (!is.null(variables())) {
-      updateCheckboxGroupInput(session, "variables_total", selected = setdiff(variables(), "Total"))
-      updateSliderInput(session, "year_total", value = c(1990, 2023))
-      updateCheckboxGroupInput(session, "variables_subsector", selected = setdiff(variables(), "Total"))
-      updateSliderInput(session, "year_subsector", value = c(1990, 2023))
-      updateCheckboxGroupInput(session, "variables_gas", selected = setdiff(variables(), "Total"))
-      updateSliderInput(session, "year_gas", value = c(1990, 2023))
-    }
+  # Ensure all variables are selected when the app is opened or summary page is clicked
+  observe({
+    lapply(c("total", "subsector", "gas"), function(prefix) {
+      updateCheckboxGroupInput(session, paste0("variables_", prefix), selected = variables())
+    })
   })
   
-  # Trigger the reset for the initial selection of "Bar Chart" tab
+  # Ensure all variables except "Total" are selected for the charts
   observe({
-    if (input$navbar == "total") {  # Adjust based on the initial tab
-      shinyjs::runjs("
-        $('.sidebar').show();
-        $('.main-panel').removeClass('full-width').addClass('col-sm-9');
-      ")
-    }
+    lapply(c("total", "subsector", "gas"), function(prefix) {
+      updateCheckboxGroupInput(session, paste0("variables_", prefix), selected = setdiff(variables(), "Total"))
+    })
   })
 }
