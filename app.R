@@ -1,7 +1,7 @@
 #app.R
 
 # Source other elements
-source("module_sidebar.R")
+source("panels.R")
 source("module_line_chart.R")
 source("module_area_chart.R")
 source("module_data_table.R")

@@ -1,5 +1,3 @@
-#module_sidebar.R
-
 # Function to generate the sidebar panel
 generate_sidebar_panel <- function(id_prefix) {
   div(
@@ -24,6 +22,10 @@ generate_main_panel <- function(id_prefix) {
       width = 9,
       tabsetPanel(
         tabPanel("Summary Page", 
+                 fluidRow(
+                   column(width = 4, sliderInput(paste0("summary_current_year_", id_prefix), "Current Year", min = 1990, max = 2022, value = 2022, step = 1)),
+                   column(width = 4, sliderInput(paste0("summary_comparison_year_", id_prefix), "Comparison Year", min = 1990, max = 2021, value = 2021, step = 1))
+                 ),
                  fluidRow(
                    column(width = 12, div(class = "header-text", "Top 3 Categories:"))
                  ),
