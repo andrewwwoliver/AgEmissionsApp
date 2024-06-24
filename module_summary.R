@@ -11,9 +11,7 @@ small_line_plot <- function(data, color) {
   ggplot(data, aes(x = Year, y = Value)) +
     geom_line(color = color) +
     theme_void() +
-    theme(
-      plot.background = element_rect(fill = "transparent", color = NA)
-    )
+    theme(plot.background = element_rect(fill = "transparent", color = NA))
 }
 
 # Function to create an arrow for Year on Year change
@@ -37,10 +35,7 @@ valueBoxUI <- function(id) {
 valueBoxServer <- function(id, data, category, industry, current_year, comparison_year) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    
-    reactive_data <- reactive({
-      data() %>% filter(!!sym(category()) == !!industry(), Year %in% c(current_year(), comparison_year()))
-    })
+    reactive_data <- reactive({ data() %>% filter(!!sym(category()) == !!industry(), Year %in% c(current_year(), comparison_year())) })
     
     output$valueBox <- renderUI({
       data_filtered <- reactive_data()
@@ -68,16 +63,12 @@ valueBoxServer <- function(id, data, category, industry, current_year, compariso
                 span(class = "value-box-yoy", ifelse(is.na(yoy_change), "NA", sprintf("%.2f%%", yoy_change)), style = ifelse(yoy_change > 0, "color: green; margin-left: 5px;", "color: red; margin-left: 5px;"))
             )
           ),
-          div(
-            plotOutput(ns("sparkline"), height = "30px", width = "100%")
-          )
+          div(plotOutput(ns("sparkline"), height = "30px", width = "100%"))
         )
       )
     })
     
-    output$sparkline <- renderPlot({
-      small_line_plot(data() %>% filter(!!sym(category()) == !!industry()), "#28a745")
-    })
+    output$sparkline <- renderPlot({ small_line_plot(data() %>% filter(!!sym(category()) == !!industry()), "#28a745") })
   })
 }
 
@@ -88,9 +79,7 @@ chartUI <- function(id, title) {
     title = span(class = "box-title", title),
     width = 12,
     solidHeader = TRUE,
-    div(class = "box-content",
-        highchartOutput(ns("chartOutput"), height = "300px")
-    )
+    div(class = "box-content", highchartOutput(ns("chartOutput"), height = "300px"))
   )
 }
 
@@ -98,26 +87,12 @@ chartUI <- function(id, title) {
 summaryPieChartServer <- function(id, data, current_year, category) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    
     output$chartOutput <- renderHighchart({
-      pie_data <- data() %>%
-        filter(Year == current_year() & !!sym(category()) != "Total") %>%
-        group_by(!!sym(category())) %>%
-        summarise(Value = sum(Value, na.rm = TRUE))
-      
+      pie_data <- data() %>% filter(Year == current_year() & !!sym(category()) != "Total") %>% group_by(!!sym(category())) %>% summarise(Value = sum(Value, na.rm = TRUE))
       highchart() %>%
         hc_chart(type = "pie") %>%
-        hc_series(
-          list(
-            data = list_parse(pie_data %>% transmute(name = !!sym(category()), y = Value))
-          )
-        ) %>%
-        hc_plotOptions(
-          pie = list(
-            dataLabels = list(enabled = FALSE),
-            tooltip = list(pointFormat = '<b>{point.name}</b>: {point.y:.2f} MtCO2e ({point.percentage:.2f} %)')
-          )
-        )
+        hc_series(list(data = list_parse(pie_data %>% transmute(name = !!sym(category()), y = Value)))) %>%
+        hc_plotOptions(pie = list(dataLabels = list(enabled = FALSE), tooltip = list(pointFormat = '<b>{point.name}</b>: {point.y:.2f} MtCO2e ({point.percentage:.2f} %)')))
     })
   })
 }
@@ -126,17 +101,9 @@ summaryPieChartServer <- function(id, data, current_year, category) {
 summaryBarChartServer <- function(id, data, current_year, comparison_year, category) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    
     output$chartOutput <- renderHighchart({
-      bar_data <- data() %>%
-        filter(Year == current_year() & !!sym(category()) != "Total") %>%
-        group_by(!!sym(category())) %>%
-        summarise(Value = sum(Value, na.rm = TRUE))
-      
-      line_data <- data() %>%
-        filter(Year == comparison_year() & !!sym(category()) != "Total") %>%
-        group_by(!!sym(category())) %>%
-        summarise(Value = sum(Value, na.rm = TRUE))
+      bar_data <- data() %>% filter(Year == current_year() & !!sym(category()) != "Total") %>% group_by(!!sym(category())) %>% summarise(Value = sum(Value, na.rm = TRUE))
+      line_data <- data() %>% filter(Year == comparison_year() & !!sym(category()) != "Total") %>% group_by(!!sym(category())) %>% summarise(Value = sum(Value, na.rm = TRUE))
       
       highchart() %>%
         hc_chart(type = "bar") %>%
@@ -144,11 +111,7 @@ summaryBarChartServer <- function(id, data, current_year, comparison_year, categ
         hc_yAxis(title = list(text = "MtCO2e")) %>%
         hc_add_series(name = as.character(current_year()), data = bar_data$Value, type = "bar", color = "#2f7ed8") %>%
         hc_add_series(name = as.character(comparison_year()), data = line_data$Value, type = "scatter", color = "#ff0000", marker = list(enabled = TRUE, symbol = "line", lineWidth = 2, radius = 3)) %>%
-        hc_plotOptions(series = list(
-          groupPadding = 0,
-          pointPadding = 0.1,
-          borderWidth = 0
-        )) %>%
+        hc_plotOptions(series = list(groupPadding = 0, pointPadding = 0.1, borderWidth = 0)) %>%
         hc_tooltip(shared = TRUE, pointFormat = '{series.name}: <b>{point.y:.2f} MtCO2e</b><br/>')
     })
   })

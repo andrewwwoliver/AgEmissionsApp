@@ -1,4 +1,4 @@
-# server.R
+#server.R
 
 # Source the necessary modules for server logic
 source("module_data_functions.R")
@@ -10,36 +10,18 @@ source("module_summary.R")
 # Function to setup the server logic for each tab
 setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   # Create reactive chart data based on sidebar inputs
-  chart_data <- reactive({
-    create_chart_data(chart_type, paste0("year_", tab_prefix), paste0("variables_", tab_prefix), input)
-  })
-  
-  # Get the first column name dynamically
-  first_col_name <- reactive({
-    names(chart_data())[1]
-  })
-  
-  # Get the entire dataset without filtering based on sidebar inputs for summary page
-  full_data <- reactive({
-    get_variables(chart_type)
-  })
-  
-  # Render line chart
+  chart_data <- reactive({ create_chart_data(chart_type, paste0("year_", tab_prefix), paste0("variables_", tab_prefix), input) })
+  # Get first column name dynamically
+  first_col_name <- reactive({ names(chart_data())[1] })
+  # Get the entire dataset without any sidebar filtering
+  full_data <- reactive({ get_variables(chart_type) })
+  # Render tabs 
   render_line_chart(paste0("lineChart_", tab_prefix), chart_data, chart_type, input, output)
-  
-  # Render area chart
   render_area_chart(paste0("areaChart_", tab_prefix), chart_data, chart_type, input, output)
-  
-  # Render data table
   render_data_table(paste0("pay_table_", tab_prefix), chart_data, output)
-  
-  # Handle data download
   handle_data_download(paste0("downloadData_", tab_prefix), chart_type, chart_data, input, output, paste0("year_", tab_prefix))
-  
-  # Render bar chart
-  barChartServer(paste0("barChart_", tab_prefix), chart_data, chart_type, input, output)
-  
-  # Render summary page
+  barChartServer(paste0("barChart_", tab_prefix), chart_data)
+  # Render comparison page
   current_year <- reactive({ input[[paste0("summary_current_year_", tab_prefix)]] })
   comparison_year <- reactive({ input[[paste0("summary_comparison_year_", tab_prefix)]] })
   
@@ -79,37 +61,19 @@ server <- function(input, output, session) {
            "subsector" = "Subsector Emissions",
            "gas" = "Gas Emissions")
   })
-  
   # Reactive for variables based on chart type
-  variables <- reactive({
-    unique(get_variables(chart_type())[[1]])  # First column is the variable column
-  })
-  
-  # Handle variable select and button events for each tab
+  variables <- reactive({ unique(get_variables(chart_type())[[1]]) })
+  # Handle variable select and buttons for each tab
   lapply(c("total", "subsector", "gas"), function(prefix) {
     handle_variable_select_and_buttons(prefix, variables, input, output, session)
   })
-  
   # Set up tabs
-  tabs <- list(
-    total = "Total Emissions",
-    subsector = "Subsector Emissions",
-    gas = "Gas Emissions"
-  )
-  
-  # Set up each tab using the setup_tab function
+  tabs <- list(total = "Total Emissions", subsector = "Subsector Emissions", gas = "Gas Emissions")
+  # Set up tabs using setup_tab function
   lapply(names(tabs), function(prefix) {
     setup_tab(prefix, tabs[[prefix]], input, output, session)
   })
   
-  # Ensure all variables are selected when the app is opened or summary page is clicked
-  observe({
-    lapply(c("total", "subsector", "gas"), function(prefix) {
-      updateCheckboxGroupInput(session, paste0("variables_", prefix), selected = variables())
-    })
-  })
-  
-  # Ensure all variables except "Total" are selected for the charts
   observe({
     lapply(c("total", "subsector", "gas"), function(prefix) {
       updateCheckboxGroupInput(session, paste0("variables_", prefix), selected = setdiff(variables(), "Total"))

@@ -19,7 +19,7 @@ ui <- fluidPage(
       navbarPage(
         title = div(
           div("Agricultural Emissions Dashboard", style = "flex-grow: 1;"),
-          img(src = "RESAS Logo.png", class = "header-logo")  # Add logo here
+          img(src = "RESAS Logo.png", class = "header-logo")  # Add logo 
         ),
         id = "navbar",
         tabPanel("Agriculture Emissions", value = "subsector", generate_sidebar_layout("subsector")),
