@@ -1,4 +1,4 @@
-#server.R
+# server.R
 
 # Source the necessary modules for server logic
 source("module_data_functions.R")
@@ -40,8 +40,8 @@ setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   barChartServer(paste0("barChart_", tab_prefix), chart_data, chart_type, input, output)
   
   # Render summary page
-  current_year <- reactive({ input[[paste0("year_", tab_prefix)]][2] })
-  comparison_year <- reactive({ input[[paste0("year_", tab_prefix)]][1] })
+  current_year <- reactive({ input[[paste0("summary_current_year_", tab_prefix)]] })
+  comparison_year <- reactive({ input[[paste0("summary_comparison_year_", tab_prefix)]] })
   
   valueBoxServer(paste0("totalIndustry1_", tab_prefix), full_data, first_col_name, get_industry(1, full_data, current_year, first_col_name), current_year, comparison_year)
   valueBoxServer(paste0("totalIndustry2_", tab_prefix), full_data, first_col_name, get_industry(2, full_data, current_year, first_col_name), current_year, comparison_year)

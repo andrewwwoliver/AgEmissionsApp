@@ -1,7 +1,7 @@
 #ui.R
 
 # Source UI modules
-source("module_sidebar.R")
+source("panels.R")
 source("module_line_chart.R")
 source("module_data_table.R")
 source("options.R")
