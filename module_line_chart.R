@@ -25,7 +25,7 @@ lineChartServer <- function(id, data, group_column, title, yAxisTitle) {
       colors <- reactive_colors()
       
       hc <- highchart() %>%
-        hc_chart(type = "line", style = list(fontFamily = "Roboto")) %>%
+        hc_chart(type = "line", zoom = "xy", style = list(fontFamily = "Roboto")) %>%
         hc_yAxis(title = list(text = yAxisTitle(), style = list(color = "#000000", fontSize = "20px", fontFamily = "Roboto"))) %>%
         hc_xAxis(
           labels = list(style = list(color =  "#000000", fontSize = "20px", fontFamily = "Roboto")),

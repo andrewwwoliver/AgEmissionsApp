@@ -127,7 +127,7 @@ barChartServer <- function(id, chart_data, chart_type, input, output) {
       if (nrow(data) == 0) return(NULL)
       first_col_name <- names(data)[1]
       highchart() %>%
-        hc_chart(type = "bar", animation = list(duration = 1000)) %>%
+        hc_chart(type = "bar", zoomType ="xy", animation = list(duration = 1000)) %>%
         hc_title(text = "GHG Emissions by Industry", align = "left") %>%
         hc_subtitle(useHTML = TRUE, text = current_subtitle(), floating = TRUE, align = "right", verticalAlign = "bottom", y = 30, x = -100) %>%
         hc_xAxis(type = "category", categories = data[[first_col_name]]) %>%
@@ -145,6 +145,7 @@ barChartServer <- function(id, chart_data, chart_type, input, output) {
           name = as.character(current_year()),
           data = current_data_list()
         )) %>%
+        hc_legend(enabled = FALSE) %>%
         hc_responsive(rules = list(
           list(
             condition = list(maxWidth = 550),

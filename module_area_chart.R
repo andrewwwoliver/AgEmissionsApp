@@ -20,7 +20,7 @@ areaChartServer <- function(id, data, group_column, title, yAxisTitle) {
       colors <- reactive_colors()
       
       hc <- highchart() %>%
-        hc_chart(type = "area", style = list(fontFamily = "Roboto")) %>%
+        hc_chart(type = "area", zoomType = "xy", style = list(fontFamily = "Roboto")) %>%  # Enable zoom
         hc_yAxis(title = list(text = yAxisTitle(), style = list(color = "#000000", fontSize = "20px", fontFamily = "Roboto"))) %>%
         hc_xAxis(
           labels = list(style = list(color =  "#000000", fontSize = "20px", fontFamily = "Roboto")),

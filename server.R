@@ -7,6 +7,15 @@ source("module_bar_chart.R")
 source("module_data_table.R")
 source("module_summary.R")
 
+# Function to reset the year range slider when Bar Chart tab is selected
+reset_year_range_slider <- function(tab_prefix, input, session) {
+  observeEvent(input[[paste0(tab_prefix, "_tabs")]], {
+    if (input[[paste0(tab_prefix, "_tabs")]] == "Bar Chart") {
+      updateSliderInput(session, paste0("year_", tab_prefix), value = c(1990, 2022))
+    }
+  })
+}
+
 # Function to setup the server logic for each tab
 setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   # Create reactive chart data based on sidebar inputs
@@ -50,6 +59,9 @@ setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   
   summaryPieChartServer(paste0("industryPieChart_", tab_prefix), full_data, current_year, first_col_name)
   summaryBarChartServer(paste0("industryBarChart_", tab_prefix), full_data, current_year, comparison_year, first_col_name)
+  
+  # Reset year range slider when bar chart tab is selected
+  reset_year_range_slider(tab_prefix, input, session)
 }
 
 # Function to get top industries
@@ -102,17 +114,20 @@ server <- function(input, output, session) {
     setup_tab(prefix, tabs[[prefix]], input, output, session)
   })
   
-  # Ensure all variables are selected when the app is opened or summary page is clicked
+  # Preset variables for "Industry Emissions" tab
   observe({
-    lapply(c("total", "subsector", "gas"), function(prefix) {
-      updateCheckboxGroupInput(session, paste0("variables_", prefix), selected = variables())
-    })
+    if (input$navbar == "total") {
+      updateCheckboxGroupInput(session, "variables_total", selected = c("Total", "Agriculture"))
+    }
   })
+
   
   # Ensure all variables except "Total" are selected for the charts
   observe({
-    lapply(c("total", "subsector", "gas"), function(prefix) {
-      updateCheckboxGroupInput(session, paste0("variables_", prefix), selected = setdiff(variables(), "Total"))
-    })
+    if (input$navbar != "total") {
+      lapply(c("subsector", "gas"), function(prefix) {
+        updateCheckboxGroupInput(session, paste0("variables_", prefix), selected = setdiff(variables(), "Total"))
+      })
+    }
   })
 }

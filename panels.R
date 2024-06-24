@@ -1,3 +1,5 @@
+# panels.R
+
 # Function to generate the sidebar panel
 generate_sidebar_panel <- function(id_prefix) {
   div(
@@ -21,6 +23,7 @@ generate_main_panel <- function(id_prefix) {
     mainPanel(
       width = 9,
       tabsetPanel(
+        id = paste0(id_prefix, "_tabs"),  # Add an ID to the tabsetPanel
         tabPanel("Summary Page", 
                  fluidRow(
                    column(width = 4, sliderInput(paste0("summary_current_year_", id_prefix), "Current Year", min = 1990, max = 2022, value = 2022, step = 1)),
