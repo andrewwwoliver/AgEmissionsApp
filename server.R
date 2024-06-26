@@ -1,5 +1,3 @@
-# server.R
-
 # Source the necessary modules for server logic
 source("module_data_functions.R")
 source("module_chart_functions.R")
@@ -129,14 +127,5 @@ server <- function(input, output, session) {
         updateCheckboxGroupInput(session, paste0("variables_", prefix), selected = setdiff(variables(), "Total"))
       })
     }
-  })
-  
-  # Observe changes in the main navigation and reset subtabs to the summary page
-  observeEvent(input$navbar, {
-    lapply(names(tabs), function(prefix) {
-      if (input$navbar == prefix) {
-        updateTabsetPanel(session, paste0(prefix, "_tabs"), selected = "Summary Page")
-      }
-    })
   })
 }

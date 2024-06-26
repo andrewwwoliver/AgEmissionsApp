@@ -70,7 +70,7 @@ generate_main_panel <- function(id_prefix, chart_type) {
 }
 
 # Function to generate the layout by combining sidebar and main panel
-generate_layout <- function(id_prefix, chart_type) {
+generate_sidebar_layout <- function(id_prefix, chart_type) {
   sidebarLayout(
     generate_sidebar_panel(id_prefix),  # Generate sidebar panel
     generate_main_panel(id_prefix, chart_type)  # Generate main panel
