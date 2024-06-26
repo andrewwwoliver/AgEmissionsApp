@@ -33,9 +33,9 @@ ui <- fluidPage(
               img(src = "RESAS Logo.png", class = "header-logo")  # Add logo here
             ),
             id = "navbar",
-            tabPanel("Agriculture Emissions", value = "subsector", generate_sidebar_layout("subsector", "Subsector Emissions")),
-            tabPanel("Industry Emissions", value = "total", generate_sidebar_layout("total", "Total Emissions")),
-            tabPanel("Gas Emissions", value = "gas", generate_sidebar_layout("gas", "Gas Emissions"))
+            tabPanel("Agriculture Emissions", value = "subsector", generate_layout("subsector", "Subsector Emissions")),
+            tabPanel("Industry Emissions", value = "total", generate_layout("total", "Total Emissions")),
+            tabPanel("Gas Emissions", value = "gas", generate_layout("gas", "Gas Emissions"))
           )
       ),
       create_footer()  # Add the footer panel

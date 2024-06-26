@@ -1,5 +1,18 @@
 # panels.R
 
+# Function to generate the sidebar panel
+generate_sidebar_panel <- function(id_prefix) {
+  sidebarPanel(
+    width = 3,
+    uiOutput(paste0("variable_select_", id_prefix)),  # Placeholder for variable selection UI
+    actionButton(paste0("select_all_button_", id_prefix), "Select All"),  # 'Select All' button
+    actionButton(paste0("deselect_all_button_", id_prefix), "Deselect All"),  # 'Deselect All' button
+    div(chooseSliderSkin("Flat"),
+        # Slider input for selecting the year range
+        sliderInput(paste0("year_", id_prefix), "Select year range", value = c(1990, 2022), min = 1990, max = 2022, step = 1, sep = "", ticks = TRUE))
+  )
+}
+
 # Function to generate the value boxes for the top 3 industries
 generate_top_industries <- function(id_prefix) {
   fluidRow(
@@ -25,20 +38,7 @@ generate_summary_bottom_row <- function(id_prefix, chart_type) {
   )
 }
 
-# Function to generate the sidebar for each tab
-generate_sidebar <- function(id_prefix) {
-  sidebarPanel(
-    width = 3,
-    uiOutput(paste0("variable_select_", id_prefix)),  # Placeholder for variable selection UI
-    actionButton(paste0("select_all_button_", id_prefix), "Select All"),  # 'Select All' button
-    actionButton(paste0("deselect_all_button_", id_prefix), "Deselect All"),  # 'Deselect All' button
-    div(chooseSliderSkin("Flat"),
-        # Slider input for selecting the year range
-        sliderInput(paste0("year_", id_prefix), "Select year range", value = c(1990, 2022), min = 1990, max = 2022, step = 1, sep = "", ticks = TRUE))
-  )
-}
-
-# Function to generate the main panel for each tab
+# Function to generate the main panel
 generate_main_panel <- function(id_prefix, chart_type) {
   mainPanel(
     width = 9,
@@ -66,5 +66,13 @@ generate_main_panel <- function(id_prefix, chart_type) {
                downloadButton(paste0("downloadData_", id_prefix), "Download Data")  # Download button
       )
     )
+  )
+}
+
+# Function to generate the layout by combining sidebar and main panel
+generate_layout <- function(id_prefix, chart_type) {
+  sidebarLayout(
+    generate_sidebar_panel(id_prefix),  # Generate sidebar panel
+    generate_main_panel(id_prefix, chart_type)  # Generate main panel
   )
 }
