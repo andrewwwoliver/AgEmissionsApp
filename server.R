@@ -8,7 +8,7 @@ source("module_summary.R")
 # Function to reset the year range slider when Bar Chart tab is selected
 reset_year_range_slider <- function(tab_prefix, input, session) {
   observeEvent(input[[paste0(tab_prefix, "_tabs")]], {
-    if (input[[paste0(tab_prefix, "_tabs")]] == "Bar Chart") {
+    if (input[[paste0(tab_prefix, "_tabs")]] == paste0(tab_prefix, "_bar")) {
       updateSliderInput(session, paste0("year_", tab_prefix), value = c(1990, 2022))
     }
   })
@@ -61,6 +61,15 @@ setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   
   # Reset year range slider when bar chart tab is selected
   reset_year_range_slider(tab_prefix, input, session)
+  
+  # Control sidebar state based on selected tab within the section
+  observeEvent(input[[paste0(tab_prefix, "_tabs")]], {
+    if (input[[paste0(tab_prefix, "_tabs")]] == paste0(tab_prefix, "_summary")) {
+      session$sendCustomMessage(type = 'sidebarState', message = 'close')
+    } else {
+      session$sendCustomMessage(type = 'sidebarState', message = 'open')
+    }
+  })
 }
 
 # Function to get top industries
@@ -127,5 +136,10 @@ server <- function(input, output, session) {
         updateCheckboxGroupInput(session, paste0("variables_", prefix), selected = setdiff(variables(), "Total"))
       })
     }
+  })
+  
+  # Set initial sidebar state based on selected tab
+  observeEvent(input$navbar, {
+    session$sendCustomMessage(type = 'sidebarState', message = 'close')
   })
 }
