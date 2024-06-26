@@ -95,8 +95,11 @@
   .body {
     background-color: #f9f9f9;
     font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    color: black; /* Set text color to black */
+  line-height: 1.5;
   }
-
+  
 html, body {
   height: 100%;
   margin: 0;
@@ -120,3 +123,47 @@ html, body {
   text-align: center;
   border-top: 1px solid #dee2e6;
 }
+
+
+
+/* Apply default font size, family, and color to all common elements */
+h1, h2, h3, h4, h5, h6, p, div, span, a, li, table, th, td, input, button, select, textarea {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+}
+
+/* Set default font size, family, and color for Highcharts */
+.highcharts-title,
+.highcharts-subtitle,
+.highcharts-axis-title,
+.highcharts-axis-labels,
+.highcharts-tooltip,
+.highcharts-legend-item,
+.highcharts-data-label {
+  font-family: Arial, sans-serif !important;
+  font-size: 16px !important;
+  color: black !important; /* Set text color to black */
+}
+
+/* Slider colours */
+
+
+/* Apply custom styles to all sliders */
+.irs-single, .irs-bar-edge, .irs-bar {
+  background: #002d54 !important;
+  border-top: 1px solid #002d54 !important;
+  border-bottom: 1px solid #002d54 !important;
+}
+
+/* Change the color of the number tags */
+.irs-from, .irs-to, .irs-single {
+  background: #002d54 !important;
+  color: white !important;
+  font-weight: bold !important;
+}
+
+/* Ensure grid text and min/max labels are also styled */
+.irs-grid-text, .irs-min, .irs-max {
+  color: #002d54 !important;
+}
+

@@ -64,7 +64,7 @@ barChartServer <- function(id, chart_data, chart_type, input, output) {
     getSubtitle <- function(year, data) {
       if (nrow(data) == 0) return("")
       total_value <- sum(data$Value, na.rm = TRUE)
-      paste0("<span style='font-size: 80px'>", year, "</span><br><span style='font-size: 22px'>Total: <b>", round(total_value, 2), "</b> units</span>")
+      paste0("<span style='font-size: 80px'>", year, "</span><br><span style='font-size: 22px'>Total: <b>", round(total_value, 2), "</b> MtCO₂e</span>")
     }
     
     # Generate data list for highcharter

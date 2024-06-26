@@ -21,11 +21,10 @@ lineChartServer <- function(id, data, group_column, title, yAxisTitle) {
       chart_data <- data()
       colors <- reactive_colors()
       hc <- highchart() %>%
-        hc_chart(type = "line", zoom = "xy", style = list(fontFamily = "Roboto")) %>%
-        hc_yAxis(title = list(text = yAxisTitle(), style = list(color = "#000000", fontSize = "20px", fontFamily = "Roboto"))) %>%
-        hc_xAxis(labels = list(style = list(color = "#000000", fontSize = "20px", fontFamily = "Roboto")), type = "category") %>%
+        hc_chart(type = "line", zoom = "xy") %>%
+        hc_yAxis(title = list(text = yAxisTitle())) %>%
+        hc_xAxis(type = "category", tickInterval = 5) %>%
         hc_legend(align = "left", alignColumns = FALSE, layout = "horizontal") %>%
-        hc_tooltip(pointFormat = "<b>{series.name}</b><br/>Value: {point.y:,.1f}") %>%
         hc_plotOptions(line = list(colorByPoint = FALSE)) %>%
         hc_add_theme(thm)
       

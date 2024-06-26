@@ -8,6 +8,7 @@ source("options.R")
 source("module_area_chart.R")
 source("module_bar_chart.R")
 source("module_summary.R")
+source("hc_theme.R")
 
 # Function to create the footer panel
 create_footer <- function() {
@@ -32,9 +33,9 @@ ui <- fluidPage(
               img(src = "RESAS Logo.png", class = "header-logo")  # Add logo here
             ),
             id = "navbar",
-            tabPanel("Agriculture Emissions", value = "subsector", generate_sidebar_layout("subsector")),
-            tabPanel("Industry Emissions", value = "total", generate_sidebar_layout("total")),
-            tabPanel("Gas Emissions", value = "gas", generate_sidebar_layout("gas"))
+            tabPanel("Agriculture Emissions", value = "subsector", generate_sidebar_layout("subsector", "Subsector Emissions")),
+            tabPanel("Industry Emissions", value = "total", generate_sidebar_layout("total", "Total Emissions")),
+            tabPanel("Gas Emissions", value = "gas", generate_sidebar_layout("gas", "Gas Emissions"))
           )
       ),
       create_footer()  # Add the footer panel

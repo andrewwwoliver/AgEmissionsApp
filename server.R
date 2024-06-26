@@ -57,7 +57,11 @@ setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   valueBoxServer(paste0("totalIndustry3_", tab_prefix), full_data, first_col_name, get_industry(3, full_data, current_year, first_col_name), current_year, comparison_year)
   valueBoxServer(paste0("totalValue_", tab_prefix), full_data, first_col_name, reactive("Total"), current_year, comparison_year)
   
-  summaryPieChartServer(paste0("industryPieChart_", tab_prefix), full_data, current_year, first_col_name)
+  if (chart_type == "Total Emissions") {
+    summaryLineChartServer(paste0("industryLineChart_", tab_prefix), full_data)
+  } else {
+    summaryPieChartServer(paste0("industryPieChart_", tab_prefix), full_data, current_year, first_col_name)
+  }
   summaryBarChartServer(paste0("industryBarChart_", tab_prefix), full_data, current_year, comparison_year, first_col_name)
   
   # Reset year range slider when bar chart tab is selected
@@ -120,7 +124,7 @@ server <- function(input, output, session) {
       updateCheckboxGroupInput(session, "variables_total", selected = c("Total", "Agriculture"))
     }
   })
-
+  
   
   # Ensure all variables except "Total" are selected for the charts
   observe({
