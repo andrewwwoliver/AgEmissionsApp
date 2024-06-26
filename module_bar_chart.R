@@ -1,3 +1,5 @@
+#module_bar_chart.R
+
 # UI function for the bar chart module
 barChartUI <- function(id) {
   ns <- NS(id)

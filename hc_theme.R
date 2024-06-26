@@ -1,3 +1,5 @@
+#hc_theme.R
+
 library(highcharter)
 
 # Define the Highcharts theme

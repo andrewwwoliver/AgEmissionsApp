@@ -27,12 +27,6 @@ agri_gas$Year <- as.numeric(agri_gas$Year)
 national_total$Year <- as.numeric(national_total$Year)
 subsector_total$Year <- as.numeric(subsector_total$Year)
 
-# Filter out TOTAL 
-national_total <- filter(national_total, !(Industry == "TOTAL"))
-
-# Rename Total (RHS) to total
-national_total <- national_total %>%
-  mutate(Industry = if_else(Industry == "Total (RHS)", "Total", Industry))
 
 save(subsector_total, agri_gas, national_total, subsector_source, file = "ghg_data.RData")
 

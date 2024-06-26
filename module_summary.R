@@ -112,7 +112,7 @@ summaryLineChartServer <- function(id, data) {
         hc_xAxis(categories = unique(summary_line_data$Year)) %>%
         hc_yAxis(title = list(text = "MtCO₂e")) %>%
         hc_legend(align = "left", alignColumns = FALSE, layout = "horizontal") %>%
-        hc_plotOptions(line = list(dataLabels = list(enabled = FALSE))) %>%
+        hc_plotOptions(line = list(marker = list(enabled = FALSE))) %>%  # Disable markers
         hc_add_theme(thm) %>%
         hc_add_series_list(series_list)
     })

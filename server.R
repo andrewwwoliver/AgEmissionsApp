@@ -33,19 +33,21 @@ setup_tab <- function(tab_prefix, chart_type, input, output, session) {
     get_variables(chart_type)
   })
   
-  # Render line chart
+  # Render line chart with filtering for the "total" tab
+  if (chart_type == "Total Emissions") {
+    filtered_data <- reactive({
+      full_data() %>% filter(!!sym(first_col_name()) %in% c("Agriculture", "Total"))
+    })
+    summaryLineChartServer(paste0("industryLineChart_", tab_prefix), filtered_data)
+  } else {
+    summaryPieChartServer(paste0("industryPieChart_", tab_prefix), full_data, current_year, first_col_name)
+  }
+  
+  # Render other charts
   render_line_chart(paste0("lineChart_", tab_prefix), chart_data, chart_type, input, output)
-  
-  # Render area chart
   render_area_chart(paste0("areaChart_", tab_prefix), chart_data, chart_type, input, output)
-  
-  # Render data table
   render_data_table(paste0("pay_table_", tab_prefix), chart_data, output)
-  
-  # Handle data download
   handle_data_download(paste0("downloadData_", tab_prefix), chart_type, chart_data, input, output, paste0("year_", tab_prefix))
-  
-  # Render bar chart
   barChartServer(paste0("barChart_", tab_prefix), chart_data, chart_type, input, output)
   
   # Render summary page
@@ -57,11 +59,6 @@ setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   valueBoxServer(paste0("totalIndustry3_", tab_prefix), full_data, first_col_name, get_industry(3, full_data, current_year, first_col_name), current_year, comparison_year)
   valueBoxServer(paste0("totalValue_", tab_prefix), full_data, first_col_name, reactive("Total"), current_year, comparison_year)
   
-  if (chart_type == "Total Emissions") {
-    summaryLineChartServer(paste0("industryLineChart_", tab_prefix), full_data)
-  } else {
-    summaryPieChartServer(paste0("industryPieChart_", tab_prefix), full_data, current_year, first_col_name)
-  }
   summaryBarChartServer(paste0("industryBarChart_", tab_prefix), full_data, current_year, comparison_year, first_col_name)
   
   # Reset year range slider when bar chart tab is selected
@@ -125,7 +122,6 @@ server <- function(input, output, session) {
     }
   })
   
-  
   # Ensure all variables except "Total" are selected for the charts
   observe({
     if (input$navbar != "total") {
@@ -133,5 +129,14 @@ server <- function(input, output, session) {
         updateCheckboxGroupInput(session, paste0("variables_", prefix), selected = setdiff(variables(), "Total"))
       })
     }
+  })
+  
+  # Observe changes in the main navigation and reset subtabs to the summary page
+  observeEvent(input$navbar, {
+    lapply(names(tabs), function(prefix) {
+      if (input$navbar == prefix) {
+        updateTabsetPanel(session, paste0(prefix, "_tabs"), selected = "Summary Page")
+      }
+    })
   })
 }
