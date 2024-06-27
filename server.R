@@ -61,7 +61,7 @@ setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   render_area_chart(paste0("areaChart_", tab_prefix), chart_data, chart_type, input, output)
   render_data_table(paste0("pay_table_", tab_prefix), chart_data, output)
   handle_data_download(paste0("downloadData_", tab_prefix), chart_type, chart_data, input, output, paste0("year_", tab_prefix))
-  barChartServer(paste0("barChart_", tab_prefix), chart_data, chart_type, input, output)
+  render_bar_chart(paste0("barChart_", tab_prefix), chart_data, chart_type, input, output)
   
   # Render summary page
   current_year <- reactive({ input[[paste0("summary_current_year_", tab_prefix)]] })

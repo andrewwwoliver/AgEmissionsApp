@@ -4,7 +4,7 @@
 areaChartUI <- function(id) {
   ns <- NS(id)
   tagList(
-    textOutput(ns("title")),  # Add a text output for the title
+    htmlOutput(ns("title")),  # Use htmlOutput instead of textOutput
     highchartOutput(ns("area_chart"))
   )
 }
@@ -16,10 +16,10 @@ areaChartServer <- function(id, data, group_column, title, yAxisTitle) {
     reactive_colors <- reactive({ assign_colors(data(), preset_colors) })
     
     # Title of the plot
-    output$title <- renderText({
+    output$title <- renderUI({
       year_min <- min(data()$Year, na.rm = TRUE)
       year_max <- max(data()$Year, na.rm = TRUE)
-      paste("Agricultural Emissions by Subsector in Scotland,",title(), year_min, "to", year_max)
+      HTML(paste0("<div style='font-size: 20px; font-weight: bold;'>Agricultural Emissions by Subsector in Scotland, ", year_min, " to ", year_max, "</div>"))
     })
     
     output$area_chart <- renderHighchart({

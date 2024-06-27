@@ -1,9 +1,10 @@
-#module_line_chart.R
+# module_line_chart.R
 
 # UI function for the line chart module
 lineChartUI <- function(id) {
   ns <- NS(id)
   tagList(
+    htmlOutput(ns("title")),  # Use htmlOutput instead of textOutput
     highchartOutput(ns("line_chart")),
     h2("Note:"),
     p("To remove a series from the chart, either deselect from the sidebar menu or click on its legend."),
@@ -16,6 +17,13 @@ lineChartServer <- function(id, data, group_column, title, yAxisTitle) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     reactive_colors <- reactive({ assign_colors(data(), preset_colors) })
+    
+    # Title of the plot
+    output$title <- renderUI({
+      year_min <- min(data()$Year)
+      year_max <- max(data()$Year)
+      HTML(paste0("<div style='font-size: 20px; font-weight: bold;'>", title(), " ", year_min, " to ", year_max, "</div>"))
+    })
     
     output$line_chart <- renderHighchart({
       chart_data <- data()

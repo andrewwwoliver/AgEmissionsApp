@@ -1,5 +1,12 @@
 /* styles.css */
 
+.chart-title {
+  font-size: 30px !important;
+  font-weight: bold !important;
+  margin-bottom: 10px !important;
+  font-family: 'Arial', sans-serif !important;
+}
+
 /* General styles */
 .full-width {
   width: 100% !important;
@@ -30,76 +37,76 @@
   height: 60px !important;
 }
 
-  .box {
-    border: 1px solid #e3e3e3;
-    background-color: white;
-    margin: 0;
-    padding: 10px;
-  }
-  .value-box {
-    height: 160px !important;
-    text-align: left;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    margin: 0;
-    padding: 0;
-  }
-  .value-box .inner {
-    padding: 5px;
-  }
-  .value-box h3, .value-box h5 {
-    margin: 0;
-    color: #333;
-  }
-  .value-box h3 {
-    font-size: 36px;
-    font-weight: bold;
-  }
-  .value-box-units {
-    font-size: 18px;
-    margin-left: 5px;
-    display: inline-block;
-  }
-  .value-box-title {
-    font-size: 20px;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  .value-box-yoy {
-    font-size: 24px;
-    font-weight: bold;
-  }
-  .sparkline {
-    width: 100%;
-    height: 30px;
-  }
-  .header-text {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  .box-title {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 0px;
-  }
-  .box-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-  }
-  .content, .row, .col {
-    margin: 0;
-    padding: 0;
-  }
-  .body {
-    background-color: #f9f9f9;
-    font-family: 'Arial', sans-serif;
-    font-size: 16px;
-    color: black; /* Set text color to black */
+.box {
+  border: 1px solid #e3e3e3;
+  background-color: white;
+  margin: 0;
+  padding: 10px;
+}
+.value-box {
+  height: 160px !important;
+  text-align: left;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  margin: 0;
+  padding: 0;
+}
+.value-box .inner {
+  padding: 5px;
+}
+.value-box h3, .value-box h5 {
+  margin: 0;
+  color: #333;
+}
+.value-box h3 {
+  font-size: 36px;
+  font-weight: bold;
+}
+.value-box-units {
+  font-size: 18px;
+  margin-left: 5px;
+  display: inline-block;
+}
+.value-box-title {
+  font-size: 20px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.value-box-yoy {
+  font-size: 24px;
+  font-weight: bold;
+}
+.sparkline {
+  width: 100%;
+  height: 30px;
+}
+.header-text {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.box-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+.box-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+.content, .row, .col {
+  margin: 0;
+  padding: 0;
+}
+.body {
+  background-color: #f9f9f9;
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+  color: black; /* Set text color to black */
   line-height: 1.5;
-  }
-  
+}
+
 html, body {
   height: 100%;
   margin: 0;
@@ -124,10 +131,8 @@ html, body {
   border-top: 1px solid #dee2e6;
 }
 
-
-
 /* Apply default font size, family, and color to all common elements */
-h1, h2, h3, h4, h5, h6, p, div, span, a, li, table, th, td, input, button, select, textarea {
+h1, h2, h3, h4, h5, p, div, span, a, li, table, th, td, input, button, select, textarea {
   font-family: Arial, sans-serif;
   font-size: 16px;
 }
@@ -146,7 +151,6 @@ h1, h2, h3, h4, h5, h6, p, div, span, a, li, table, th, td, input, button, selec
 }
 
 /* Slider colours */
-
 
 /* Apply custom styles to all sliders */
 .irs-single, .irs-bar-edge, .irs-bar {
@@ -167,7 +171,6 @@ h1, h2, h3, h4, h5, h6, p, div, span, a, li, table, th, td, input, button, selec
   color: #002d54 !important;
 }
 
-
 /* Remove bullet point from nav-item */
 .navbar-nav > li.nav-item,
 .navbar-nav > li {
@@ -179,3 +182,4 @@ h1, h2, h3, h4, h5, h6, p, div, span, a, li, table, th, td, input, button, selec
 /* Specific rule to remove bullet point */
 .nav-item {
   list-style: none !important;
+}

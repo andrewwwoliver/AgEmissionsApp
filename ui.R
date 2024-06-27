@@ -15,7 +15,7 @@ library(shinyjs)
 create_footer <- function() {
   div(
     class = "footer",
-    span("Last Updated: ", Sys.Date()),
+    span("Last Updated: ", format(Sys.Date(), "%d/%m/%Y")),
     img(src = "sg.png", alt = "SG Logo", style = "height: 30px; margin-left: 10px;")
   )
 }

@@ -1,4 +1,4 @@
-#hc_theme.R
+# hc_theme.R
 
 library(highcharter)
 
@@ -80,12 +80,20 @@ thm <- hc_theme(
         fontFamily = "Arial, sans-serif",
         fontSize = "16px",
         color = "black"
-      ),# Disable sticky tracking
+      ),
+      dataLabels = list(
+        style = list(
+          fontFamily = "Arial, sans-serif",
+          fontSize = "16px",  # Increase the font size for data labels
+          color = "black"
+        )
+      ),
       marker = list(
         enabled = TRUE,
         states = list(
           hover = list(
-            enabled = TRUE)
+            enabled = TRUE
+          )
         )
       )
     )
@@ -95,5 +103,3 @@ thm <- hc_theme(
 
 # Apply the Highcharts theme globally
 options(highcharter.theme = thm)
-
-
