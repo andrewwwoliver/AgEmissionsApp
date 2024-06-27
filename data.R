@@ -1,3 +1,5 @@
+## data.R
+
 library(readxl)
 library(openxlsx)
 library(dplyr)
@@ -10,6 +12,7 @@ file_path <- "ghg_data.xlsx"
 agri_gas <- read_excel(file_path, sheet = "agri_gas")
 national_total <- read_excel(file_path, sheet = "national_total")
 subsector_total <- read_excel(file_path, sheet = "subsector_total")
+subsector_source <- read_excel(file_path, sheet = "subsector_source")
 
 agri_gas <- agri_gas %>% 
   rename(Gas = ...1)
@@ -24,14 +27,8 @@ agri_gas$Year <- as.numeric(agri_gas$Year)
 national_total$Year <- as.numeric(national_total$Year)
 subsector_total$Year <- as.numeric(subsector_total$Year)
 
-# Filter out TOTAL 
-national_total <- filter(national_total, !(Industry == "TOTAL"))
 
-# Rename Total (RHS) to total
-national_total <- national_total %>%
-  mutate(Industry = if_else(Industry == "Total (RHS)", "Total", Industry))
-
-save(subsector_total, agri_gas, national_total, file = "ghg_data.RData")
+save(subsector_total, agri_gas, national_total, subsector_source, file = "ghg_data.RData")
 
 # load data
 load("ghg_data.RData")

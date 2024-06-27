@@ -1,130 +1,185 @@
-/* ------------------------------------------------------------------- */
-/* slider */
-/* ------------------------------------------------------------------- */
-@charset "UTF-8";
-/* 'shiny' skin for Ion.RangeSlider, largely based on the 'big' skin, but with smaller dimensions, grayscale grid text, and without gradients
-© RStudio, Inc, 2014
-© Denis Ineshin, 2014  https://github.com/IonDen
-© guybowden, 2014  https://github.com/guybowden
-*/
-
-
-/* ------------------------------------------------------------------- */
-/* Page Layout */
-/* ------------------------------------------------------------------- */
-
-@page {
-  margin-bottom: 1.27cm;
-  margin-left: 1.27cm;
-  margin-right: 1.27cm;
-  margin-top: 1.27cm;
-}
-
-/* ------------------------------------------------------------------- */
-/* Common Elements */
-/* ------------------------------------------------------------------- */
-
-body {
-  color: black !important;
-  font-size: 18px;
-  line-height: 1.5em;
-  margin-top: 0.5em;
-  margin-bottom: 0.5em;
-  padding: 0 !important;
-}
-
-h1 {
-  font-size: 1.8em;
-}
-
-h2 {
-  font-size: 1.2em;
-}
-
-h3 {
-  font-size: 0.8em;
-}
-
-h4, h5, h6 {
-  font-size: 1em;
-  text-decoration: underline;
-}
-
-/* ------------------------------------------------------------------- */
-/* Figures, Images, and Tables */
-/* ------------------------------------------------------------------- */
-
-/* Limit the position and size of elements */
-figure, img, table {
-  max-width: 80%;
-  page-break-inside: avoid;
-}
-
-/* ------------------------------------------------------------------- */
-/* Sidebar and Main Content Layout */
-/* ------------------------------------------------------------------- */
-
-
-.sidebar {
-  position: absolute;
-  top: 150px; /* Adjust this value based on the height of your title and other top content */
-  bottom: 0;
-  width: 250px;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.main {
-  margin-left: 270px; /* Slightly more than the sidebar width for some padding */
-  padding: 10px;
-}
-
-@media screen and (max-width: 768px) {
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-    border-right: none;
-    top: 0; /* Reset the top value for small screens */
-  }
-  .main {
-    margin-left: 0;
-    padding-top: 20px; /* Adjust for mobile view */
-  }
-}
-
-
 /* styles.css */
-.header-tabs .nav-tabs {
-  border-bottom: 2px solid #007bff;
+
+.chart-title {
+  font-size: 30px !important;
+  font-weight: bold !important;
+  margin-bottom: 10px !important;
+  font-family: 'Arial', sans-serif !important;
 }
 
-.header-tabs .nav-tabs .nav-item.show .nav-link, 
-.header-tabs .nav-tabs .nav-link.active {
-  color: #fff;
-  background-color: #007bff;
-  border-color: #007bff #007bff #fff;
-  border-radius: 0;
+/* General styles */
+.full-width {
+  width: 100% !important;
+}
+.full-height {
+  height: 100vh !important;
+}
+.navbar {
+  margin-bottom: 5px !important;
+}
+.sidebar {
+  width: 250px !important;
+  padding: 10px !important;
+  border-right: 1px solid #ddd !important;
+  float: left !important;  /* Float to the left */
+  height: calc(100vh - 65px) !important;  /* Adjust for header and reduced margin */
+}
+.main-panel {
+  margin-left: 270px !important;
+  padding: 10px !important;
+  overflow: auto !important;  /* Enable scrolling for main content */
+  height: calc(100vh - 65px) !important;  /* Adjust for header and reduced margin */
+}
+.header-logo {
+  position: absolute !important;
+  top: 0px !important;
+  right: 0px !important;
+  height: 60px !important;
 }
 
-.header-tabs .nav-tabs .nav-link {
-  border: 1px solid transparent;
-  border-top-left-radius: 0.25rem;
-  border-top-right-radius: 0.25rem;
-  color: #007bff;
+.box {
+  border: 1px solid #e3e3e3;
+  background-color: white;
+  margin: 0;
   padding: 10px;
 }
-
-.header-tabs .nav-tabs .nav-link:hover {
-  border-color: #e9ecef #e9ecef #ddd;
-  background-color: #e9ecef;
-  color: #0056b3;
+.value-box {
+  height: 160px !important;
+  text-align: left;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  margin: 0;
+  padding: 0;
+}
+.value-box .inner {
+  padding: 5px;
+}
+.value-box h3, .value-box h5 {
+  margin: 0;
+  color: #333;
+}
+.value-box h3 {
+  font-size: 36px;
+  font-weight: bold;
+}
+.value-box-units {
+  font-size: 18px;
+  margin-left: 5px;
+  display: inline-block;
+}
+.value-box-title {
+  font-size: 20px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.value-box-yoy {
+  font-size: 24px;
+  font-weight: bold;
+}
+.sparkline {
+  width: 100%;
+  height: 30px;
+}
+.header-text {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.box-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+.box-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+.content, .row, .col {
+  margin: 0;
+  padding: 0;
+}
+.body {
+  background-color: #f9f9f9;
+  font-family: 'Arial', sans-serif;
+  font-size: 16px;
+  color: black; /* Set text color to black */
+  line-height: 1.5;
 }
 
-.header-tabs .tab-content {
-  border: 1px solid #ddd;
-  border-top: none;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.container-fluid.full-height {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1 0 auto;
+}
+
+.footer {
+  flex-shrink: 0;
+  background-color: #ffffff;
   padding: 10px;
+  text-align: center;
+  border-top: 1px solid #dee2e6;
 }
 
+/* Apply default font size, family, and color to all common elements */
+h1, h2, h3, h4, h5, p, div, span, a, li, table, th, td, input, button, select, textarea {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+}
 
+/* Set default font size, family, and color for Highcharts */
+.highcharts-title,
+.highcharts-subtitle,
+.highcharts-axis-title,
+.highcharts-axis-labels,
+.highcharts-tooltip,
+.highcharts-legend-item,
+.highcharts-data-label {
+  font-family: Arial, sans-serif !important;
+  font-size: 16px !important;
+  color: black !important; /* Set text color to black */
+}
+
+/* Slider colours */
+
+/* Apply custom styles to all sliders */
+.irs-single, .irs-bar-edge, .irs-bar {
+  background: #002d54 !important;
+  border-top: 1px solid #002d54 !important;
+  border-bottom: 1px solid #002d54 !important;
+}
+
+/* Change the color of the number tags */
+.irs-from, .irs-to, .irs-single {
+  background: #002d54 !important;
+  color: white !important;
+  font-weight: bold !important;
+}
+
+/* Ensure grid text and min/max labels are also styled */
+.irs-grid-text, .irs-min, .irs-max {
+  color: #002d54 !important;
+}
+
+/* Remove bullet point from nav-item */
+.navbar-nav > li.nav-item,
+.navbar-nav > li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Specific rule to remove bullet point */
+.nav-item {
+  list-style: none !important;
+}
