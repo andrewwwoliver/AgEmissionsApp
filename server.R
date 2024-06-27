@@ -1,3 +1,5 @@
+#server.R
+
 # Source the necessary modules for server logic
 source("module_data_functions.R")
 source("module_chart_functions.R")
@@ -162,4 +164,12 @@ server <- function(input, output, session) {
   observeEvent(input$toggleSidebar, {
     session$sendCustomMessage(type = 'toggleSidebar', message = NULL)
   })
+  # Reset to summary page
+  observeEvent(input$navbar, {
+    updateTabsetPanel(session, "subsector_tabs", selected = "subsector_summary")
+    updateTabsetPanel(session, "total_tabs", selected = "total_summary")
+    updateTabsetPanel(session, "gas_tabs", selected = "gas_summary")
+  })
 }
+
+

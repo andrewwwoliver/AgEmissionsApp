@@ -1,7 +1,4 @@
-library(shiny)
-library(shinyjs)
-library(shinythemes)
-library(highcharter)
+#ui.R
 
 # Source UI modules
 source("panels.R")
@@ -42,8 +39,8 @@ generate_sidebar_layout <- function(id_prefix, chart_type) {
         tabPanel("Summary Page",
                  value = paste0(id_prefix, "_summary"),
                  fluidRow(
-                   column(width = 4, sliderInput(paste0("summary_current_year_", id_prefix), "Current Year", min = 1990, max = 2022, value = 2022, step = 1)),
-                   column(width = 4, sliderInput(paste0("summary_comparison_year_", id_prefix), "Comparison Year", min = 1990, max = 2022, value = 2021, step = 1))
+                   column(width = 4, sliderInput(paste0("summary_current_year_", id_prefix), "Current Year", min = 1990, max = 2022, value = 2022, sep = "", ticks = TRUE, step = 1)),
+                   column(width = 4, sliderInput(paste0("summary_comparison_year_", id_prefix), "Comparison Year", min = 1990, max = 2022, sep = "", ticks = TRUE, value = 2021, step = 1))
                  ),
                  fluidRow(
                    column(width = 12, div(class = "header-text", "Top 3 Categories:"))
