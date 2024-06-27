@@ -1,4 +1,4 @@
-#ui.R
+# ui.R
 
 # Source UI modules
 source("panels.R")
@@ -9,6 +9,7 @@ source("module_area_chart.R")
 source("module_bar_chart.R")
 source("module_summary.R")
 source("hc_theme.R")
+library(shinyjs)
 
 # Function to create the footer panel
 create_footer <- function() {
@@ -39,8 +40,8 @@ generate_sidebar_layout <- function(id_prefix, chart_type) {
         tabPanel("Summary Page",
                  value = paste0(id_prefix, "_summary"),
                  fluidRow(
-                   column(width = 4, sliderInput(paste0("summary_current_year_", id_prefix), "Current Year", min = 1990, max = 2022, value = 2022, sep = "", ticks = TRUE, step = 1)),
-                   column(width = 4, sliderInput(paste0("summary_comparison_year_", id_prefix), "Comparison Year", min = 1990, max = 2022, sep = "", ticks = TRUE, value = 2021, step = 1))
+                   column(width = 4, sliderInput(paste0("summary_current_year_", id_prefix), "Current Year", min = 1990, max = 2022, value = 2022, step = 1, sep = "")),
+                   column(width = 4, sliderInput(paste0("summary_comparison_year_", id_prefix), "Comparison Year", min = 1990, max = 2022, value = 2021, step = 1, sep = ""))
                  ),
                  fluidRow(
                    column(width = 12, div(class = "header-text", "Top 3 Categories:"))
@@ -51,9 +52,9 @@ generate_sidebar_layout <- function(id_prefix, chart_type) {
                  ),
                  generate_summary_bottom_row(id_prefix, chart_type)
         ),
-        tabPanel("Bar Chart", barChartUI(paste0("barChart_", id_prefix)), value = paste0(id_prefix, "_bar")),
-        tabPanel("Line Chart", lineChartUI(paste0("lineChart_", id_prefix)), value = paste0(id_prefix, "_line")),
-        tabPanel("Area Chart", areaChartUI(paste0("areaChart_", id_prefix)), value = paste0(id_prefix, "_area")),
+        tabPanel("Bar Chart", div(id = "chartArea", barChartUI(paste0("barChart_", id_prefix))), value = paste0(id_prefix, "_bar")),
+        tabPanel("Line Chart", div(id = "chartArea", lineChartUI(paste0("lineChart_", id_prefix))), value = paste0(id_prefix, "_line")),
+        tabPanel("Area Chart", div(id = "chartArea", areaChartUI(paste0("areaChart_", id_prefix))), value = paste0(id_prefix, "_area")),
         tabPanel("Data Table",
                  dataTableOutput(paste0("pay_table_", id_prefix)),
                  downloadButton(paste0("downloadData_", id_prefix), "Download Data"),

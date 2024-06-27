@@ -75,11 +75,17 @@ thm <- hc_theme(
   ),
   plotOptions = list(
     series = list(
-      dataLabels = list(
-        style = list(
-          fontFamily = "Arial, sans-serif",
-          fontSize = "16px",
-          color = "black"
+      stickyTracking = FALSE,
+      itemStyle = list(
+        fontFamily = "Arial, sans-serif",
+        fontSize = "16px",
+        color = "black"
+      ),# Disable sticky tracking
+      marker = list(
+        enabled = TRUE,
+        states = list(
+          hover = list(
+            enabled = TRUE)
         )
       )
     )

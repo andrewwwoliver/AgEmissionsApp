@@ -16,6 +16,19 @@ reset_year_range_slider <- function(tab_prefix, input, session) {
   })
 }
 
+# List of sidebar IDs
+sidebar_ids <- c("sidebar_total", "sidebar_subsector", "sidebar_gas")
+
+# Define a function to show and then hide the sidebars
+toggle_sidebars <- function(ids, delay_time = 100) {
+  lapply(ids, shinyjs::show)
+  shinyjs::delay(delay_time, {
+    lapply(ids, shinyjs::hide)
+  })
+}
+
+
+
 # Function to setup the server logic for each tab
 setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   # Create reactive chart data based on sidebar inputs
@@ -124,30 +137,17 @@ server <- function(input, output, session) {
     setup_tab(prefix, tabs[[prefix]], input, output, session)
   })
   
-  # Preset variables for "Industry Emissions" tab
-  observe({
-    if (input$navbar == "total") {
-      updateCheckboxGroupInput(session, "variables_total", selected = c("Total", "Agriculture"))
-    }
-  })
   
   # Ensure all variables except "Total" are selected for the charts
   observe({
-    if (input$navbar != "total") {
-      lapply(c("subsector", "gas"), function(prefix) {
+    lapply(c("total", "subsector", "gas"), function(prefix) {
+      if (input$navbar == prefix) {
         updateCheckboxGroupInput(session, paste0("variables_", prefix), selected = setdiff(variables(), "Total"))
-      })
-    }
+      }
+    })
   })
   
-  # Set initial sidebar state to closed for all tabs
-  session$sendCustomMessage(type = 'sidebarState', message = 'close')
-  
-  # Control sidebar state based on selected tab within the section
-  observeEvent(input$navbar, {
-    session$sendCustomMessage(type = 'sidebarState', message = 'close')
-  })
-  
+# hide on summary page
   observeEvent(input$navbar, {
     lapply(names(tabs), function(prefix) {
       observeEvent(input[[paste0(prefix, "_tabs")]], {
@@ -164,12 +164,27 @@ server <- function(input, output, session) {
   observeEvent(input$toggleSidebar, {
     session$sendCustomMessage(type = 'toggleSidebar', message = NULL)
   })
+  
   # Reset to summary page
   observeEvent(input$navbar, {
     updateTabsetPanel(session, "subsector_tabs", selected = "subsector_summary")
     updateTabsetPanel(session, "total_tabs", selected = "total_summary")
     updateTabsetPanel(session, "gas_tabs", selected = "gas_summary")
   })
+  # Ensure sidebar loads correctly
+  observeEvent(input$navbar, {
+    # Call the toggle_sidebars function
+    toggle_sidebars(sidebar_ids)
+    
+    # Update the tabset panel based on the selected navbar
+    tabset_panel_id <- switch(input$navbar,
+                              "total" = "total_tabs",
+                              "gas" = "gas_tabs",
+                              "subsector" = "subsector_tabs")
+    selected_tab <- paste0(input$navbar, "_summary")
+    updateTabsetPanel(session, tabset_panel_id, selected = selected_tab)
+  })
+  
 }
 
 
