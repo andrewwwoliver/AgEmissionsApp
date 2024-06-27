@@ -116,15 +116,11 @@ ui <- fluidPage(
       div(class = "content",
           navbarPage(
             title = div(
-              div("Agricultural Emissions Dashboard", style = "flex-grow: 1;"),
-              img(src = "RESAS Logo.png", class = "header-logo")
+              div("Agricultural Emissions Dashboard", style = "display: inline-block; margin-right: 20px;"),
+              actionLink("toggleSidebar", icon("bars"), class = "nav-link", style = "display: inline-block; vertical-align: middle;"),
+              tags$li(class = "nav-item", img(src = "RESAS Logo.png", class = "header-logo"))
             ),
             id = "navbar",
-            header = tags$li(class = "dropdown",
-                             tags$a(href = "#", id = "toggleSidebar", class = "dropdown-toggle", `data-toggle` = "dropdown",
-                                    tags$i(class = "fa fa-bars"), "Toggle Sidebar"
-                             )
-            ),
             tabPanel("Agriculture Emissions", value = "subsector", generate_sidebar_layout("subsector", "Subsector Emissions")),
             tabPanel("Industry Emissions", value = "total", generate_sidebar_layout("total", "Total Emissions")),
             tabPanel("Gas Emissions", value = "gas", generate_sidebar_layout("gas", "Gas Emissions"))

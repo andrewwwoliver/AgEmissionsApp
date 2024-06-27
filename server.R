@@ -138,8 +138,28 @@ server <- function(input, output, session) {
     }
   })
   
-  # Set initial sidebar state based on selected tab
+  # Set initial sidebar state to closed for all tabs
+  session$sendCustomMessage(type = 'sidebarState', message = 'close')
+  
+  # Control sidebar state based on selected tab within the section
   observeEvent(input$navbar, {
     session$sendCustomMessage(type = 'sidebarState', message = 'close')
+  })
+  
+  observeEvent(input$navbar, {
+    lapply(names(tabs), function(prefix) {
+      observeEvent(input[[paste0(prefix, "_tabs")]], {
+        if (input[[paste0(prefix, "_tabs")]] == paste0(prefix, "_summary")) {
+          session$sendCustomMessage(type = 'sidebarState', message = 'close')
+        } else {
+          session$sendCustomMessage(type = 'sidebarState', message = 'open')
+        }
+      })
+    })
+  })
+  
+  # Toggle sidebar button
+  observeEvent(input$toggleSidebar, {
+    session$sendCustomMessage(type = 'toggleSidebar', message = NULL)
   })
 }

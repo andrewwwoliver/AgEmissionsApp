@@ -167,3 +167,15 @@ h1, h2, h3, h4, h5, h6, p, div, span, a, li, table, th, td, input, button, selec
   color: #002d54 !important;
 }
 
+
+/* Remove bullet point from nav-item */
+.navbar-nav > li.nav-item,
+.navbar-nav > li {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Specific rule to remove bullet point */
+.nav-item {
+  list-style: none !important;
