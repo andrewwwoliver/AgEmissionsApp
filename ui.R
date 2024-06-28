@@ -8,6 +8,7 @@ source("options.R")
 source("module_area_chart.R")
 source("module_bar_chart.R")
 source("module_summary.R")
+source("module_information.R")  # Add this line
 source("hc_theme.R")
 library(shinyjs)
 
@@ -20,13 +21,13 @@ create_footer <- function() {
   )
 }
 
-
 # Generate the UI
 ui <- fluidPage(
   useShinyjs(),  # Initialize shinyjs
   theme = shinytheme("flatly"),
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
+    includeHTML("google-analytics.html"),  # Include Google Analytics HTML
     tags$script(HTML("
       $(document).ready(function() {
         $('#toggleSidebar').on('click', function() {
@@ -78,7 +79,8 @@ ui <- fluidPage(
             id = "navbar",
             tabPanel("Agriculture Emissions", value = "subsector", generate_sidebar_layout("subsector", "Subsector Emissions")),
             tabPanel("Industry Emissions", value = "total", generate_sidebar_layout("total", "Total Emissions")),
-            tabPanel("Gas Emissions", value = "gas", generate_sidebar_layout("gas", "Gas Emissions"))
+            tabPanel("Gas Emissions", value = "gas", generate_sidebar_layout("gas", "Gas Emissions")),
+            tabPanel("Further Information", value = "info", informationUI("info"))  # Add this line
           )
       ),
       create_footer()

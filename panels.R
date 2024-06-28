@@ -26,16 +26,7 @@ generate_summary_bottom_row <- function(id_prefix, chart_type) {
     fluidRow(
       column(width = 4, 
              valueBoxUI(paste0("totalValue_", id_prefix)), 
-             div(
-               div(class = "header-text", style = "padding-left: 15px;", "Publications:"), # Adjust padding as needed
-               box(
-                 title = NULL, 
-                 width = 12, 
-                 solidHeader = TRUE, 
-                 "insert text here",
-                 style = "margin-top: 10px; padding-left: 15px;" # Adjust padding and margin as needed
-               )
-             ),
+             
              style = "padding-right: 0; padding-left: 0;"
       ),
       column(width = 4,
@@ -79,7 +70,7 @@ generate_sidebar_layout <- function(id_prefix, chart_type) {
                    column(width = 4, sliderInput(paste0("summary_comparison_year_", id_prefix), "Comparison Year", min = 1990, max = 2022, value = 2021, step = 1)),
                    column(width = 4,
                           div(
-                            style = "margin-top: 25px; text-align: center; border: 10px solid #e3e3e3", # Add border style
+                            style = "margin-top: 25px; text-align: center; border: 4px solid #e3e3e3", # Add border style
                             h5("Adjust the sliders to compare data from different years.", style = "padding: 0px; font-weight: bold;")
                           )
                    )

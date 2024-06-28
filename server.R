@@ -112,11 +112,15 @@ server <- function(input, output, session) {
     switch(input$navbar,
            "total" = "Total Emissions",
            "subsector" = "Subsector Emissions",
-           "gas" = "Gas Emissions")
+           "gas" = "Gas Emissions",
+           "info" = NULL)  # Special case for Further Information tab
   })
   
   # Reactive for variables based on chart type
   variables <- reactive({
+    if (is.null(chart_type())) {
+      return(NULL)
+    }
     unique(get_variables(chart_type())[[1]])  # First column is the variable column
   })
   
@@ -124,19 +128,6 @@ server <- function(input, output, session) {
   lapply(c("total", "subsector", "gas"), function(prefix) {
     handle_variable_select_and_buttons(prefix, variables, input, output, session)
   })
-  
-  # Set up tabs
-  tabs <- list(
-    total = "Total Emissions",
-    subsector = "Subsector Emissions",
-    gas = "Gas Emissions"
-  )
-  
-  # Set up each tab using the setup_tab function
-  lapply(names(tabs), function(prefix) {
-    setup_tab(prefix, tabs[[prefix]], input, output, session)
-  })
-  
   
   # Ensure all variables except "Total" are selected for the charts
   observe({
@@ -147,7 +138,18 @@ server <- function(input, output, session) {
     })
   })
   
-# hide on summary page
+  # Set up tabs
+  tabs <- list(
+    total = "Total Emissions",
+    subsector = "Subsector Emissions",
+    gas = "Gas Emissions"
+  )
+  
+  lapply(names(tabs), function(prefix) {
+    setup_tab(prefix, tabs[[prefix]], input, output, session)
+  })
+  
+  # Control sidebar state based on selected tab within the section
   observeEvent(input$navbar, {
     lapply(names(tabs), function(prefix) {
       observeEvent(input[[paste0(prefix, "_tabs")]], {
@@ -173,18 +175,15 @@ server <- function(input, output, session) {
   })
   # Ensure sidebar loads correctly
   observeEvent(input$navbar, {
-    # Call the toggle_sidebars function
     toggle_sidebars(sidebar_ids)
-    
-    # Update the tabset panel based on the selected navbar
     tabset_panel_id <- switch(input$navbar,
                               "total" = "total_tabs",
                               "gas" = "gas_tabs",
-                              "subsector" = "subsector_tabs")
-    selected_tab <- paste0(input$navbar, "_summary")
-    updateTabsetPanel(session, tabset_panel_id, selected = selected_tab)
+                              "subsector" = "subsector_tabs",
+                              "info" = NULL)
+    if (!is.null(tabset_panel_id)) {
+      selected_tab <- paste0(input$navbar, "_summary")
+      updateTabsetPanel(session, tabset_panel_id, selected = selected_tab)
+    }
   })
-  
 }
-
-

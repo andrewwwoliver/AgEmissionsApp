@@ -1,0 +1,12 @@
+name: ScottishAgricultureEmissionsDashboard
+title: ScottishAgricultureEmissionsDashboard
+username: andrewwoliver
+account: andrewwoliver
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 12248709
+bundleId: 8800596
+url: https://andrewwoliver.shinyapps.io/ScottishAgricultureEmissionsDashboard/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
