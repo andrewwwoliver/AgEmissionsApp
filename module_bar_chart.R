@@ -1,18 +1,14 @@
-# module_bar_chart.R
+#module_bar_chart.R
 
 # UI function for the bar chart module
 barChartUI <- function(id) {
   ns <- NS(id)
   tagList(
-    htmlOutput(ns("title")),  # Use htmlOutput instead of textOutput
     tags$style(HTML("
       .chart-container {
         position: relative;
       }
       .chart-controls {
-        position: absolute;
-        top: 10px;
-        right: 20px;
         display: flex;
         align-items: center;
       }
@@ -29,18 +25,22 @@ barChartUI <- function(id) {
       }
     ")),
     div(class = "chart-container",
-        highchartOutput(ns("chart"), height = "500px"),
-        div(class = "chart-controls",
-            div(class = "year-label", "Year:"),
-            sliderInput(ns("year"), NULL, min = 1998, max = 2022, value = 1998, step = 1, sep = "", ticks=TRUE, animate = animationOptions(interval = 1000, loop = FALSE), width = '200px'),
-            actionButton(ns("playPause"), "", icon = icon("play"), class = "btn btn-primary")
-        )
-    )
+        fluidRow(
+          column(8, htmlOutput(ns("title"))),  # Title column
+          column(4, div(class = "chart-controls",
+                        div(class = "year-label", "Year:"),
+                        sliderInput(ns("year"), NULL, min = 1998, max = 2022, value = 1998, step = 1, sep = "", ticks=TRUE, animate = animationOptions(interval = 1000, loop = FALSE), width = '200px'),
+                        actionButton(ns("playPause"), "", icon = icon("play"), class = "btn btn-primary")
+          ))
+        ),
+        highchartOutput(ns("chart"), height = "500px")
+    ),
+    htmlOutput(ns("footer"))  # Add footer output
   )
 }
 
 # Server function for the bar chart module
-barChartServer <- function(id, chart_data, column_name, title, yAxisTitle) {
+barChartServer <- function(id, chart_data, column_name, title, yAxisTitle, footer) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     
@@ -121,6 +121,13 @@ barChartServer <- function(id, chart_data, column_name, title, yAxisTitle) {
       updateSliderInput(session, "year", value = current_year())
     })
     
+    output$title <- renderUI({
+      HTML(paste0("<div style='font-size: 20px; font-weight: bold;'>", title(), "</div>"))
+    })
+    
+    output$footer <- renderUI({
+      HTML(footer())
+    })
     
     output$chart <- renderHighchart({
       data <- current_data()
@@ -128,10 +135,8 @@ barChartServer <- function(id, chart_data, column_name, title, yAxisTitle) {
       first_col_name <- names(data)[1]
       highchart() %>%
         hc_chart(type = "bar", zoomType ="xy", animation = list(duration = 1000)) %>%
-        hc_title(text = HTML(paste0("<b style='font-size: 20px;'>", title(), "</b>")), align = "left") %>%
-        hc_subtitle(useHTML = TRUE, text = current_subtitle(), floating = TRUE, align = "right", verticalAlign = "bottom", y = 30, x = -100) %>%
         hc_xAxis(type = "category", categories = data[[first_col_name]]) %>%
-         hc_yAxis(opposite = TRUE, tickPixelInterval = 150, title = list(text = yAxisTitle()), max = max_value() + 1) %>%
+        hc_yAxis(opposite = TRUE, tickPixelInterval = 150, title = list(text = yAxisTitle()), max = max_value() + 1) %>%
         hc_plotOptions(series = list(
           animation = FALSE,
           groupPadding = 0,
@@ -151,7 +156,6 @@ barChartServer <- function(id, chart_data, column_name, title, yAxisTitle) {
             condition = list(maxWidth = 550),
             chartOptions = list(
               xAxis = list(visible = FALSE),
-              subtitle = list(x = 0),
               plotOptions = list(
                 series = list(
                   dataLabels = list(

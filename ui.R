@@ -21,6 +21,7 @@ create_footer <- function() {
 }
 
 # Function to generate the sidebar layout for each tab
+# Function to generate the sidebar layout for each tab
 generate_sidebar_layout <- function(id_prefix, chart_type) {
   sidebarLayout(
     sidebarPanel(
@@ -58,11 +59,12 @@ generate_sidebar_layout <- function(id_prefix, chart_type) {
         tabPanel("Data Table",
                  dataTableOutput(paste0("pay_table_", id_prefix)),
                  downloadButton(paste0("downloadData_", id_prefix), "Download Data"),
-                 value = paste0(id_prefix, "_data"))
+                  value = paste0(id_prefix, "_data"))       
+        )
       )
     )
-  )
 }
+
 
 # Generate the UI
 ui <- fluidPage(

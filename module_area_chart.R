@@ -4,29 +4,33 @@
 areaChartUI <- function(id) {
   ns <- NS(id)
   tagList(
-    htmlOutput(ns("title")),  # Use htmlOutput instead of textOutput
-    highchartOutput(ns("area_chart"))
+    htmlOutput(ns("title")),
+    highchartOutput(ns("area_chart")),
+    htmlOutput(ns("footer"))  # Add footer output
   )
 }
 
 # Server function for the area chart module
-areaChartServer <- function(id, data, group_column, title, yAxisTitle) {
+areaChartServer <- function(id, data, group_column, title, yAxisTitle, footer) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     reactive_colors <- reactive({ assign_colors(data(), preset_colors) })
     
-    # Title of the plot
     output$title <- renderUI({
       year_min <- min(data()$Year, na.rm = TRUE)
       year_max <- max(data()$Year, na.rm = TRUE)
       HTML(paste0("<div style='font-size: 20px; font-weight: bold;'>Agricultural Emissions by Subsector in Scotland, ", year_min, " to ", year_max, "</div>"))
     })
     
+    output$footer <- renderUI({
+      HTML(footer())
+    })
+    
     output$area_chart <- renderHighchart({
       chart_data <- data()
       colors <- reactive_colors()
       hc <- highchart() %>%
-        hc_chart(type = "area", zoomType = "xy") %>%  # Enable zoom
+        hc_chart(type = "area", zoomType = "xy") %>%
         hc_yAxis(title = list(text = yAxisTitle())) %>%
         hc_xAxis(type = "category", tickInterval = 5) %>%
         hc_plotOptions(area = list(stacking = "normal")) %>%

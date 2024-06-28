@@ -29,7 +29,6 @@ toggle_sidebars <- function(ids, delay_time = 100) {
 
 
 
-# Function to setup the server logic for each tab
 setup_tab <- function(tab_prefix, chart_type, input, output, session) {
   # Create reactive chart data based on sidebar inputs
   chart_data <- reactive({
@@ -86,6 +85,7 @@ setup_tab <- function(tab_prefix, chart_type, input, output, session) {
     }
   })
 }
+
 
 # Function to get top industries
 get_industry <- function(index, data, current_year, first_col_name) {
