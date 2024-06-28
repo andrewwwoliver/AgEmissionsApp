@@ -52,7 +52,7 @@ generate_sidebar_layout <- function(id_prefix, chart_type) {
                  ),
                  generate_summary_bottom_row(id_prefix, chart_type)
         ),
-        tabPanel("Bar Chart", div(id = "chartArea", barChartUI(paste0("barChart_", id_prefix))), value = paste0(id_prefix, "_bar")),
+        tabPanel("Timelapse", div(id = "chartArea", barChartUI(paste0("barChart_", id_prefix))), value = paste0(id_prefix, "_bar")),
         tabPanel("Line Chart", div(id = "chartArea", lineChartUI(paste0("lineChart_", id_prefix))), value = paste0(id_prefix, "_line")),
         tabPanel("Area Chart", div(id = "chartArea", areaChartUI(paste0("areaChart_", id_prefix))), value = paste0(id_prefix, "_area")),
         tabPanel("Data Table",
@@ -114,7 +114,7 @@ ui <- fluidPage(
       div(class = "content",
           navbarPage(
             title = div(
-              div("Agricultural Emissions Dashboard", style = "display: inline-block; margin-right: 20px;"),
+              div("Scottish Agricultural Emissions Dashboard", style = "display: inline-block; margin-right: 20px;"),
               actionLink("toggleSidebar", icon("bars"), class = "nav-link", style = "display: inline-block; vertical-align: middle;"),
               tags$li(class = "nav-item", img(src = "RESAS Logo.png", class = "header-logo"))
             ),
