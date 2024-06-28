@@ -35,7 +35,18 @@ barChartUI <- function(id) {
         ),
         highchartOutput(ns("chart"), height = "500px")
     ),
-    htmlOutput(ns("footer"))  # Add footer output
+    htmlOutput(ns("footer")),  # Add footer output
+    div(
+      class = "note",
+      style = "margin-top: 20px; padding: 10px; border-top: 1px solid #ddd;",
+      HTML(
+        "<strong>Note:</strong><ul>
+          <li>Press the play button at the top right of the screen to see the timelapse of the data. You can manually adjust the year by adjusting the slider.</li>
+          <li>To remove a series from the chart, deselect the variable from the sidebar menu.</li>
+          <li>You can see data values for a specific year by hovering your mouse over the line.</li>
+        </ul>"
+      )
+    )
   )
 }
 

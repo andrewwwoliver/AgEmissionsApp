@@ -20,51 +20,6 @@ create_footer <- function() {
   )
 }
 
-# Function to generate the sidebar layout for each tab
-# Function to generate the sidebar layout for each tab
-generate_sidebar_layout <- function(id_prefix, chart_type) {
-  sidebarLayout(
-    sidebarPanel(
-      id = paste0("sidebar_", id_prefix),
-      width = 3,
-      uiOutput(paste0("variable_select_", id_prefix)),
-      actionButton(paste0("select_all_button_", id_prefix), "Select All"),
-      actionButton(paste0("deselect_all_button_", id_prefix), "Deselect All"),
-      div(chooseSliderSkin("Flat"),
-          sliderInput(paste0("year_", id_prefix), "Select year range", value = c(1990, 2022), min = 1990, max = 2022, step = 1, sep = "", ticks = TRUE))
-    ),
-    mainPanel(
-      id = paste0("mainpanel_", id_prefix),
-      width = 9,
-      tabsetPanel(
-        id = paste0(id_prefix, "_tabs"),
-        tabPanel("Summary Page",
-                 value = paste0(id_prefix, "_summary"),
-                 fluidRow(
-                   column(width = 4, sliderInput(paste0("summary_current_year_", id_prefix), "Current Year", min = 1990, max = 2022, value = 2022, step = 1, sep = "")),
-                   column(width = 4, sliderInput(paste0("summary_comparison_year_", id_prefix), "Comparison Year", min = 1990, max = 2022, value = 2021, step = 1, sep = ""))
-                 ),
-                 fluidRow(
-                   column(width = 12, div(class = "header-text", "Top 3 Categories:"))
-                 ),
-                 generate_top_industries(id_prefix),
-                 fluidRow(
-                   column(width = 12, div(class = "header-text", "Summary Analysis:"))
-                 ),
-                 generate_summary_bottom_row(id_prefix, chart_type)
-        ),
-        tabPanel("Timelapse", div(id = "chartArea", barChartUI(paste0("barChart_", id_prefix))), value = paste0(id_prefix, "_bar")),
-        tabPanel("Line Chart", div(id = "chartArea", lineChartUI(paste0("lineChart_", id_prefix))), value = paste0(id_prefix, "_line")),
-        tabPanel("Area Chart", div(id = "chartArea", areaChartUI(paste0("areaChart_", id_prefix))), value = paste0(id_prefix, "_area")),
-        tabPanel("Data Table",
-                 dataTableOutput(paste0("pay_table_", id_prefix)),
-                 downloadButton(paste0("downloadData_", id_prefix), "Download Data"),
-                  value = paste0(id_prefix, "_data"))       
-        )
-      )
-    )
-}
-
 
 # Generate the UI
 ui <- fluidPage(
