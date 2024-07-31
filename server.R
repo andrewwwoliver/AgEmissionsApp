@@ -1,10 +1,7 @@
 # server.R
 
 # Source the necessary modules for server logic
-
 source("module_summary.R")
-
-#module_data_functions.R
 
 # Function to get data based on the chart type
 get_variables <- function(chart_type) {
@@ -30,9 +27,6 @@ assign_colors <- function(data, colors) {
   variables <- unique(data[[first_col_name]])
   setNames(colors[1:length(variables)], variables)
 }
-
-
-
 
 # Function to setup the server logic for each tab
 setup_tab <- function(tab_prefix, chart_type, input, output, session) {
@@ -108,5 +102,3 @@ server <- function(input, output, session) {
     setup_tab(prefix, tabs[[prefix]], input, output, session)
   })
 }
-
-
