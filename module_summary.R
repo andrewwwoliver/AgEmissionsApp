@@ -6,7 +6,6 @@ library(ggplot2)
 library(dplyr)
 library(highcharter)
 
-
 # Function to create a small line plot for the value boxes
 small_line_plot <- function(data, color) {
   ggplot(data, aes(x = Year, y = Value)) +
@@ -36,7 +35,7 @@ valueBoxUI <- function(id) {
 valueBoxServer <- function(id, data, category, industry, current_year, comparison_year) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
-    reactive_data <- reactive({ data() %>% filter(!!sym(category()) == !!industry(), Year %in% c(current_year(), comparison_year())) })
+    reactive_data <- reactive({ data() %>% filter(!!sym(category) == !!industry(), Year %in% c(current_year(), comparison_year())) })
     
     output$valueBox <- renderUI({
       data_filtered <- reactive_data()
@@ -74,7 +73,7 @@ valueBoxServer <- function(id, data, category, industry, current_year, compariso
     })
     
     output$sparkline <- renderPlot({
-      small_line_plot(data() %>% filter(!!sym(category()) == !!industry()), "#28a745")
+      small_line_plot(data() %>% filter(!!sym(category) == !!industry()), "#28a745")
     })
   })
 }
@@ -125,32 +124,30 @@ summaryPieChartServer <- function(id, data, current_year, category) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     output$chartOutput <- renderHighchart({
-      pie_data <- data() %>% filter(Year == current_year() & !!sym(category()) != "Total") %>% 
-        group_by(!!sym(category())) %>% summarise(Value = sum(Value, na.rm = TRUE))
+      pie_data <- data() %>% filter(Year == current_year() & !!sym(category) != "Total") %>% 
+        group_by(!!sym(category)) %>% summarise(Value = sum(Value, na.rm = TRUE))
       highchart() %>%
         hc_chart(type = "pie") %>%
-        hc_series(list(data = list_parse(pie_data %>% transmute(name = !!sym(category()), y = Value)))) %>%
+        hc_series(list(data = list_parse(pie_data %>% transmute(name = !!sym(category), y = Value)))) %>%
         hc_plotOptions(pie = list(dataLabels = list(enabled = FALSE),
                                   tooltip = list(pointFormat = '{point.y:.2f} MtCO₂e ({point.percentage:.2f}%)')))
     })
   })
 }
 
-
-
 # Server Module for Bar Chart
 summaryBarChartServer <- function(id, data, current_year, comparison_year, category) {
   moduleServer(id, function(input, output, session) {
     ns <- session$ns
     output$chartOutput <- renderHighchart({
-      bar_data <- data() %>% filter(Year == current_year() & !!sym(category()) != "Total") %>% group_by(!!sym(category())) %>% summarise(Value = sum(Value, na.rm = TRUE))
-      line_data <- data() %>% filter(Year == comparison_year() & !!sym(category()) != "Total") %>% group_by(!!sym(category())) %>% summarise(Value = sum(Value, na.rm = TRUE))
+      bar_data <- data() %>% filter(Year == current_year() & !!sym(category) != "Total") %>% group_by(!!sym(category)) %>% summarise(Value = sum(Value, na.rm = TRUE))
+      line_data <- data() %>% filter(Year == comparison_year() & !!sym(category) != "Total") %>% group_by(!!sym(category)) %>% summarise(Value = sum(Value, na.rm = TRUE))
       
       colors <- c("#002d54", "#2b9c93", "#6a2063", "#e5682a", "#0b4c0b", "#5d9f3c", "#592c20", "#ca72a2")
       
       highchart() %>%
         hc_chart(type = "bar") %>%
-        hc_xAxis(categories = bar_data[[category()]]) %>%
+        hc_xAxis(categories = bar_data[[category]]) %>%
         hc_yAxis(title = list(text = "MtCO₂e")) %>%
         hc_add_series(
           name = as.character(current_year()), 
@@ -170,5 +167,23 @@ summaryBarChartServer <- function(id, data, current_year, comparison_year, categ
         hc_tooltip(shared = TRUE, pointFormat = '{series.name}: {point.y:.2f} MtCO₂e<br/>') %>%
         hc_add_theme(thm)
     })
+  })
+}
+
+# Function to get top industries
+get_industry <- function(index, data, current_year, first_col_name) {
+  reactive({
+    industries <- data() %>%
+      filter(Year == current_year() & !!sym(first_col_name) != "Total") %>%
+      group_by(!!sym(first_col_name)) %>%
+      summarise(Value = sum(Value, na.rm = TRUE)) %>%
+      arrange(desc(Value)) %>%
+      slice_head(n = 3) %>%
+      pull(!!sym(first_col_name))
+    if (length(industries) >= index) {
+      industries[index]
+    } else {
+      NA
+    }
   })
 }
