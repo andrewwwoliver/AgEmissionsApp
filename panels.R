@@ -13,30 +13,11 @@ generate_sidebar_panel <- function(id_prefix) {
   )
 }
 
-# Function to generate the value boxes for the top 3 industries
-generate_top_industries <- function(id_prefix) {
-  fluidRow(
-    column(width = 4, valueBoxUI(paste0("totalIndustry1_", id_prefix)), style = "padding-right: 0; padding-left: 0;"),
-    column(width = 4, valueBoxUI(paste0("totalIndustry2_", id_prefix)), style = "padding-right: 0; padding-left: 0;"),
-    column(width = 4, valueBoxUI(paste0("totalIndustry3_", id_prefix)), style = "padding-right: 0; padding-left: 0;")
-  )
-}
 
-# Function to generate the bottom row of the summary page
-generate_summary_bottom_row <- function(id_prefix, chart_type) {
-  fluidRow(
-    column(width = 4, valueBoxUI(paste0("totalValue_", id_prefix)), style = "padding-right: 0; padding-left: 0;"),
-    column(width = 4,
-           if (chart_type == "Total Emissions") {
-             chartUI(paste0("industryLineChart_", id_prefix), "Industry Emissions Over Time")
-           } else {
-             chartUI(paste0("industryPieChart_", id_prefix), "Category Breakdown")
-           },
-           style = "padding-right: 0; padding-left: 0;"
-    ),
-    column(width = 4, chartUI(paste0("industryBarChart_", id_prefix), "Emissions by Category"), style = "padding-right: 0; padding-left: 0;")
-  )
-}
+
+
+
+
 
 # Function to generate the main panel
 generate_main_panel <- function(id_prefix, chart_type) {

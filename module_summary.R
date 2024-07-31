@@ -6,6 +6,7 @@ library(ggplot2)
 library(dplyr)
 library(highcharter)
 
+
 # Function to create a small line plot for the value boxes
 small_line_plot <- function(data, color) {
   ggplot(data, aes(x = Year, y = Value)) +
@@ -135,14 +136,7 @@ summaryPieChartServer <- function(id, data, current_year, category) {
   })
 }
 
-# Helper function to render the appropriate summary chart
-render_summary_chart <- function(chart_type, id, data, current_year, category) {
-  if (chart_type == "Total Emissions") {
-    summaryLineChartServer(id, data)
-  } else {
-    summaryPieChartServer(id, data, current_year, category)
-  }
-}
+
 
 # Server Module for Bar Chart
 summaryBarChartServer <- function(id, data, current_year, comparison_year, category) {

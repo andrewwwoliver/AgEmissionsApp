@@ -1,0 +1,538 @@
+## File: app.R 
+ #app.R
+
+# Source other elements
+source("panels.R")
+source("options.R")
+source("module_summary.R")
+
+# Source the UI and server components
+source("ui.R")
+source("server.R")
+
+# Run the app
+shinyApp(ui = ui, server = server)
+
+## File: data.R 
+ ## data.R
+
+library(readxl)
+library(openxlsx)
+library(dplyr)
+library(tidyr)
+
+
+
+# Load  data from the Excel file
+file_path <- "ghg_data.xlsx"
+agri_gas <- read_excel(file_path, sheet = "agri_gas")
+national_total <- read_excel(file_path, sheet = "national_total")
+subsector_total <- read_excel(file_path, sheet = "subsector_total")
+subsector_source <- read_excel(file_path, sheet = "subsector_source")
+
+agri_gas <- agri_gas %>% 
+  rename(Gas = ...1)
+
+# Reshape the data to long format
+agri_gas <- agri_gas %>% pivot_longer(cols = -Gas, names_to = "Year", values_to = "Value")
+national_total <- national_total %>% pivot_longer(cols = -Industry, names_to = "Year", values_to = "Value")
+subsector_total <- subsector_total %>% pivot_longer(cols = -Subsector, names_to = "Year", values_to = "Value")
+
+# Convert Year to numeric
+agri_gas$Year <- as.numeric(agri_gas$Year)
+national_total$Year <- as.numeric(national_total$Year)
+subsector_total$Year <- as.numeric(subsector_total$Year)
+
+
+save(subsector_total, agri_gas, national_total, subsector_source, file = "ghg_data.RData")
+
+# load data
+load("ghg_data.RData")
+
+## File: hc_theme.R 
+ # hc_theme.R
+
+library(highcharter)
+
+# Define the Highcharts theme
+thm <- hc_theme(
+  chart = list(
+    style = list(
+      fontFamily = "Arial, sans-serif",
+      fontSize = "16px",
+      color = "black"
+    )
+  ),
+  title = list(
+    style = list(
+      fontFamily = "Arial, sans-serif",
+      fontSize = "16px",
+      color = "black"
+    )
+  ),
+  subtitle = list(
+    style = list(
+      fontFamily = "Arial, sans-serif",
+      fontSize = "16px",
+      color = "black"
+    )
+  ),
+  xAxis = list(
+    labels = list(
+      style = list(
+        fontFamily = "Arial, sans-serif",
+        fontSize = "16px",
+        color = "black"
+      )
+    ),
+    title = list(
+      style = list(
+        fontFamily = "Arial, sans-serif",
+        fontSize = "16px",
+        color = "black"
+      )
+    )
+  ),
+  yAxis = list(
+    labels = list(
+      style = list(
+        fontFamily = "Arial, sans-serif",
+        fontSize = "16px",
+        color = "black"
+      )
+    ),
+    title = list(
+      style = list(
+        fontFamily = "Arial, sans-serif",
+        fontSize = "16px",
+        color = "black"
+      )
+    )
+  ),
+  tooltip = list(
+    style = list(
+      fontFamily = "Arial, sans-serif",
+      fontSize = "16px",
+      color = "black"
+    ),
+    headerFormat = "<b>{point.key}</b><br/>",  
+    pointFormat = "{series.name}: {point.y:.2f} MtCO₂e"
+  ),
+  legend = list(
+    itemStyle = list(
+      fontFamily = "Arial, sans-serif",
+      fontSize = "16px",
+      color = "black"
+    )
+  ),
+  plotOptions = list(
+    series = list(
+      stickyTracking = FALSE,
+      itemStyle = list(
+        fontFamily = "Arial, sans-serif",
+        fontSize = "16px",
+        color = "black"
+      ),
+      dataLabels = list(
+        style = list(
+          fontFamily = "Arial, sans-serif",
+          fontSize = "16px",  # Increase the font size for data labels
+          color = "black"
+        )
+      ),
+      marker = list(
+        enabled = TRUE,
+        states = list(
+          hover = list(
+            enabled = TRUE
+          )
+        )
+      )
+    )
+  ),
+  colors = c("#002d54", "#2b9c93", "#6a2063", "#e5682a", "#0b4c0b", "#5d9f3c", "#592c20", "#ca72a2")
+)
+
+# Apply the Highcharts theme globally
+options(highcharter.theme = thm)
+
+## File: module_summary.R 
+ #module_summary.R
+
+library(shiny)
+library(shinydashboard)
+library(ggplot2)
+library(dplyr)
+library(highcharter)
+
+# Function to create a small line plot for the value boxes
+small_line_plot <- function(data, color) {
+  ggplot(data, aes(x = Year, y = Value)) +
+    geom_line(color = "#002d54") +
+    theme_void() +
+    theme(plot.background = element_rect(fill = "transparent", color = NA))
+}
+
+# Function to create an arrow for Year on Year change
+create_yoy_arrow <- function(change) {
+  if (is.na(change) || is.nan(change)) {
+    icon("minus", style = "color: grey;")
+  } else if (change > 0) {
+    icon("arrow-up", style = "color: #2b9c93;")
+  } else {
+    icon("arrow-down", style = "color: #002d54;")
+  }
+}
+
+# UI Module for Value Box
+valueBoxUI <- function(id) {
+  ns <- NS(id)
+  uiOutput(ns("valueBox"))
+}
+
+# Server Module for Value Box
+valueBoxServer <- function(id, data, category, industry, current_year, comparison_year) {
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+    reactive_data <- reactive({ data() %>% filter(!!sym(category()) == !!industry(), Year %in% c(current_year(), comparison_year())) })
+    
+    output$valueBox <- renderUI({
+      data_filtered <- reactive_data()
+      current_value <- data_filtered %>% filter(Year == current_year()) %>% summarise(Value = sum(Value, na.rm = TRUE)) %>% pull(Value)
+      comparison_value <- data_filtered %>% filter(Year == comparison_year()) %>% summarise(Value = sum(Value, na.rm = TRUE)) %>% pull(Value)
+      yoy_change <- if (comparison_value == 0 || is.na(comparison_value)) NA else ((current_value - comparison_value) / comparison_value) * 100
+      
+      box(
+        class = "value-box",
+        title = NULL,
+        width = 12,
+        solidHeader = TRUE,
+        div(
+          style = "display: flex; flex-direction: column; justify-content: space-between; height: 100%; padding: 5px;", # Adjusted padding
+          div(
+            style = "flex: 1; margin-bottom: 5px;", # Reduced margin-bottom
+            h5(class = "value-box-title", industry()),
+            div(
+              style = "display: flex; align-items: baseline; margin-bottom: 5px;", # Adjusted margin-bottom
+              h3(sprintf("%.2f", current_value), style = "margin: 0;"), # Removed margin
+              span("MtCO₂e", class = "value-box-units")
+            ),
+            div(
+              style = "display: flex; align-items: center; margin-bottom: -10px;", # Negative margin to move closer
+              create_yoy_arrow(yoy_change),
+              span(class = "value-box-yoy", ifelse(is.na(yoy_change), "NA", sprintf("%.2f%%", yoy_change)), style = ifelse(yoy_change > 0, "color: #2b9c93; margin-left: 5px;", "color: #002d54; margin-left: 5px;"))
+            )
+          ),
+          div(
+            style = "margin-top: -30px;", # Apply the margin here to move the sparkline up
+            plotOutput(ns("sparkline"), height = "30px", width = "100%")
+          )
+        )
+      )
+    })
+    
+    output$sparkline <- renderPlot({
+      small_line_plot(data() %>% filter(!!sym(category()) == !!industry()), "#28a745")
+    })
+  })
+}
+
+
+# UI Module for Chart
+chartUI <- function(id, title) {
+  ns <- NS(id)
+  box(
+    title = span(class = "box-title", title),
+    width = 12,
+    solidHeader = TRUE,
+    div(class = "box-content", highchartOutput(ns("chartOutput"), height = "300px"))
+  )
+}
+
+# Server Module for Line Chart on Summary Page
+summaryLineChartServer <- function(id, data) {
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+    
+    output$chartOutput <- renderHighchart({
+      summary_line_data <- data()
+      variable_col <- names(summary_line_data)[1]  # Get the first column name, which is the variable name
+      
+      series_list <- lapply(unique(summary_line_data[[variable_col]]), function(variable) {
+        df <- summary_line_data %>% filter(!!sym(variable_col) == variable)
+        list(
+          name = variable,
+          data = df %>% select(Year, Value) %>% list_parse2()
+        )
+      })
+      
+      highchart() %>%
+        hc_chart(type = "line", zoomType = "xy") %>%
+        hc_xAxis(categories = unique(summary_line_data$Year)) %>%
+        hc_yAxis(title = list(text = "MtCO₂e")) %>%
+        hc_legend(align = "left", alignColumns = FALSE, layout = "horizontal") %>%
+        hc_plotOptions(line = list(marker = list(enabled = FALSE))) %>%  # Disable markers
+        hc_add_theme(thm) %>%
+        hc_add_series_list(series_list)
+    })
+  })
+}
+
+# Server Module for Pie Chart
+summaryPieChartServer <- function(id, data, current_year, category) {
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+    output$chartOutput <- renderHighchart({
+      pie_data <- data() %>% filter(Year == current_year() & !!sym(category()) != "Total") %>% 
+        group_by(!!sym(category())) %>% summarise(Value = sum(Value, na.rm = TRUE))
+      highchart() %>%
+        hc_chart(type = "pie") %>%
+        hc_series(list(data = list_parse(pie_data %>% transmute(name = !!sym(category()), y = Value)))) %>%
+        hc_plotOptions(pie = list(dataLabels = list(enabled = FALSE),
+                                  tooltip = list(pointFormat = '{point.y:.2f} MtCO₂e ({point.percentage:.2f}%)')))
+    })
+  })
+}
+
+
+
+# Server Module for Bar Chart
+summaryBarChartServer <- function(id, data, current_year, comparison_year, category) {
+  moduleServer(id, function(input, output, session) {
+    ns <- session$ns
+    output$chartOutput <- renderHighchart({
+      bar_data <- data() %>% filter(Year == current_year() & !!sym(category()) != "Total") %>% group_by(!!sym(category())) %>% summarise(Value = sum(Value, na.rm = TRUE))
+      line_data <- data() %>% filter(Year == comparison_year() & !!sym(category()) != "Total") %>% group_by(!!sym(category())) %>% summarise(Value = sum(Value, na.rm = TRUE))
+      
+      colors <- c("#002d54", "#2b9c93", "#6a2063", "#e5682a", "#0b4c0b", "#5d9f3c", "#592c20", "#ca72a2")
+      
+      highchart() %>%
+        hc_chart(type = "bar") %>%
+        hc_xAxis(categories = bar_data[[category()]]) %>%
+        hc_yAxis(title = list(text = "MtCO₂e")) %>%
+        hc_add_series(
+          name = as.character(current_year()), 
+          data = bar_data$Value, 
+          type = "bar", 
+          colorByPoint = TRUE, 
+          colors = colors
+        ) %>%
+        hc_add_series(
+          name = as.character(comparison_year()), 
+          data = line_data$Value, 
+          type = "scatter", 
+          color = "#ff0000", 
+          marker = list(enabled = TRUE, symbol = "circle", lineWidth = 2, radius = 3)
+        ) %>%
+        hc_plotOptions(series = list(groupPadding = 0, pointPadding = 0.1, borderWidth = 0)) %>%
+        hc_tooltip(shared = TRUE, pointFormat = '{series.name}: {point.y:.2f} MtCO₂e<br/>') %>%
+        hc_add_theme(thm)
+    })
+  })
+}
+
+## File: server.R 
+ # server.R
+
+# Source the necessary modules for server logic
+
+source("module_summary.R")
+
+#module_data_functions.R
+
+# Function to get data based on the chart type
+get_variables <- function(chart_type) {
+  switch(chart_type,
+         "Total Emissions" = national_total,
+         "Subsector Emissions" = subsector_total,
+         "Gas Emissions" = agri_gas)
+}
+
+# Function to create reactive chart data based on user inputs
+create_chart_data <- function(chart_type, year_input, variables_input, input) {
+  data <- get_variables(chart_type)
+  first_col_name <- names(data)[1]
+  data %>%  filter(!!sym(first_col_name) %in% input[[variables_input]])
+}
+
+# Preset list of colors
+preset_colors <- c("#002d54", "#2b9c93", "#6a2063", "#e5682a", "#0b4c0b", "#5d9f3c", "#592c20", "#ca72a2")
+
+# Function to assign colors to variables
+assign_colors <- function(data, colors) {
+  first_col_name <- names(data)[1]
+  variables <- unique(data[[first_col_name]])
+  setNames(colors[1:length(variables)], variables)
+}
+
+# Function to handle variable select and button events
+handle_variable_select_and_buttons <- function(id_prefix, variables, input, output, session) {
+  selected_variables <- reactive({ vars <- variables(); vars[vars != "Total"] })
+  
+  output[[paste0("variable_select_", id_prefix)]] <- renderUI({
+    checkboxGroupInput(paste0("variables_", id_prefix), "Choose variables to add to chart", choices = variables(), selected = selected_variables())
+  })
+  
+  observeEvent(input[[paste0("select_all_button_", id_prefix)]], {
+    updateCheckboxGroupInput(session, paste0("variables_", id_prefix), selected = variables())
+  })
+  
+  observeEvent(input[[paste0("deselect_all_button_", id_prefix)]], {
+    updateCheckboxGroupInput(session, paste0("variables_", id_prefix), selected = character(0))
+  })
+}
+
+
+# Function to setup the server logic for each tab
+setup_tab <- function(tab_prefix, chart_type, input, output, session) {
+  # Create reactive chart data based on sidebar inputs
+  chart_data <- reactive({
+    create_chart_data(chart_type, paste0("year_", tab_prefix), paste0("variables_", tab_prefix), input)
+  })
+  
+  # Get the first column name dynamically
+  first_col_name <- reactive({
+    names(chart_data())[1]
+  })
+  
+  # Get the entire dataset without filtering based on sidebar inputs for summary page
+  full_data <- reactive({
+    get_variables(chart_type)
+  })
+  
+  # Render summary page
+  current_year <- reactive({ input[[paste0("summary_current_year_", tab_prefix)]] })
+  comparison_year <- reactive({ input[[paste0("summary_comparison_year_", tab_prefix)]] })
+  
+  valueBoxServer(paste0("totalIndustry1_", tab_prefix), full_data, first_col_name, get_industry(1, full_data, current_year, first_col_name), current_year, comparison_year)
+  valueBoxServer(paste0("totalIndustry2_", tab_prefix), full_data, first_col_name, get_industry(2, full_data, current_year, first_col_name), current_year, comparison_year)
+  valueBoxServer(paste0("totalIndustry3_", tab_prefix), full_data, first_col_name, get_industry(3, full_data, current_year, first_col_name), current_year, comparison_year)
+  valueBoxServer(paste0("totalValue_", tab_prefix), full_data, first_col_name, reactive("Total"), current_year, comparison_year)
+  summaryPieChartServer(paste0("industryPieChart_", tab_prefix), full_data, current_year, first_col_name)
+  summaryBarChartServer(paste0("industryBarChart_", tab_prefix), full_data, current_year, comparison_year, first_col_name)
+}
+
+# Function to get top industries
+get_industry <- function(index, data, current_year, first_col_name) {
+  reactive({
+    industries <- data() %>%
+      filter(Year == current_year() & !!sym(first_col_name()) != "Total") %>%
+      group_by(!!sym(first_col_name())) %>%
+      summarise(Value = sum(Value, na.rm = TRUE)) %>%
+      arrange(desc(Value)) %>%
+      slice_head(n = 3) %>%
+      pull(!!sym(first_col_name()))
+    if (length(industries) >= index) {
+      industries[index]
+    } else {
+      NA
+    }
+  })
+}
+
+# Set up server
+server <- function(input, output, session) {
+  # Reactive for chart type based on selected tab
+  chart_type <- reactive({
+    switch(input$navbar,
+           "total" = "Total Emissions",
+           "subsector" = "Subsector Emissions",
+           "gas" = "Gas Emissions")
+  })
+  
+  # Reactive for variables based on chart type
+  variables <- reactive({
+    unique(get_variables(chart_type())[[1]])  # First column is the variable column
+  })
+  
+  # Set up tabs
+  tabs <- list(
+    total = "Total Emissions",
+    subsector = "Subsector Emissions",
+    gas = "Gas Emissions"
+  )
+  
+  # Set up each tab using the setup_tab function
+  lapply(names(tabs), function(prefix) {
+    setup_tab(prefix, tabs[[prefix]], input, output, session)
+  })
+}
+
+
+
+## File: ui.R 
+ # ui.R
+
+# Source UI modules
+source("panels.R")
+source("options.R")
+source("module_summary.R")
+source("hc_theme.R")
+library(shinyjs)
+
+# Function to create the footer panel
+create_footer <- function() {
+  div(
+    class = "footer",
+    span("Last Updated: ", format(Sys.Date(), "%d/%m/%Y")),
+    img(src = "sg.png", alt = "SG Logo", style = "height: 30px; margin-left: 10px;")
+  )
+}
+
+# Function to generate the sidebar layout for each tab
+generate_sidebar_layout <- function(id_prefix, chart_type) {
+  sidebarLayout(
+    sidebarPanel(
+      id = paste0("sidebar_", id_prefix),
+      width = 3,
+      uiOutput(paste0("variable_select_", id_prefix)),
+ ),
+    mainPanel(
+      id = paste0("mainpanel_", id_prefix),
+      width = 9,
+      tabsetPanel(
+        id = paste0(id_prefix, "_tabs"),
+        tabPanel("Summary Page",
+                 value = paste0(id_prefix, "_summary"),
+                 fluidRow(
+                   column(width = 4, sliderInput(paste0("summary_current_year_", id_prefix), "Current Year", min = 1990, max = 2022, value = 2022, step = 1, sep = "")),
+                   column(width = 4, sliderInput(paste0("summary_comparison_year_", id_prefix), "Comparison Year", min = 1990, max = 2022, value = 2021, step = 1, sep = ""))
+                 ),
+                 fluidRow(
+                   column(width = 12, div(class = "header-text", "Top 3 Categories:"))
+                 ),
+                 generate_top_industries(id_prefix),
+                 fluidRow(
+                   column(width = 12, div(class = "header-text", "Summary Analysis:"))
+                 ),
+                 generate_summary_bottom_row(id_prefix, chart_type)
+        )
+      )
+    )
+  )
+}
+
+# Generate the UI
+ui <- fluidPage(
+  useShinyjs(),  # Initialize shinyjs
+  theme = shinytheme("flatly"),
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+    
+  ),
+  div(class = "container-fluid full-height",
+      div(class = "content",
+          navbarPage(
+            title = div(
+              div("Agricultural Emissions Dashboard", style = "display: inline-block; margin-right: 20px;"),
+              actionLink("toggleSidebar", icon("bars"), class = "nav-link", style = "display: inline-block; vertical-align: middle;"),
+              tags$li(class = "nav-item", img(src = "RESAS Logo.png", class = "header-logo"))
+            ),
+            id = "navbar",
+            tabPanel("Agriculture Emissions", value = "subsector", generate_sidebar_layout("subsector", "Subsector Emissions")),
+            tabPanel("Gas Emissions", value = "gas", generate_sidebar_layout("gas", "Gas Emissions"))
+          )
+      ),
+      create_footer()
+  )
+)
